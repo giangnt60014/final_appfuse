@@ -5,6 +5,14 @@
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <class>org.appfuse.model.User</class>
         <class>org.appfuse.model.Role</class>
+        <class>com.giangnt.webapp.model.Person</class>
+        <class>com.giangnt.webapp.model.FSAccount</class>
+        <properties>
+         <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
+         <property name="hibernate.hbm2ddl.auto" value="update"/>
+         <property name="hibernate.show_sql" value="true"/>
+         <property name="hibernate.format_sql" value="true"/>
+      </properties>
     </persistence-unit>
 
     <!-- WARNING: This file's file original source is at web/common/src/main/resources/META-INF. The

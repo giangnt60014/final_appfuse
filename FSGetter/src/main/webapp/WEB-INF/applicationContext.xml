@@ -16,12 +16,12 @@
 	<!-- <bean id="fsAccountDao" class="org.appfuse.dao.hibernate.GenericDaoHibernate">
         <constructor-arg value="com.giangnt.webapp.model.FSAccount"/> 
     </bean> -->
-    <!-- <bean id="fsAccountManager" class="com.giangnt.webapp.service.impl.FSAccountManagerImpl">     
-    <constructor-arg>         
-        <bean id="fsAccountDao" class="com.giangnt.webapp.dao.hibernate.FSAccountDaoHibernate" autowire="byType">             
+    <bean id="fsAccountManager" class="com.giangnt.webapp.service.impl.FSAccountManagerImpl">     
+    <constructor-arg value="fsAccountDao">         
+        <!-- <bean id="fsAccountDao" class="com.giangnt.webapp.dao.hibernate.FSAccountDaoHibernate" autowire="byType">             
             <constructor-arg value="com.giangnt.webapp.model.FSAccount"/>         
-        </bean>     
+        </bean>     --> 
     </constructor-arg> 
-</bean> -->
+</bean>
     <!-- Add new Managers here -->
 </beans>

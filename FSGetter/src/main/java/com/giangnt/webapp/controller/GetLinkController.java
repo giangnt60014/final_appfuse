@@ -9,15 +9,16 @@ import org.springframework.web.servlet.ModelAndView;
 import com.giangnt.webapp.service.FSAccountManager;
 
 @Controller
-@RequestMapping("/getterform*")
+@RequestMapping("user/getterform*")
 public class GetLinkController {
 
-	private FSAccountManager fsAccountManager = null;
+	@Autowired
+	private FSAccountManager fsAccountManager;
 
-    @Autowired
-    public void setFSAccountManager(FSAccountManager fsAccountManager) {
-        this.fsAccountManager = fsAccountManager;
-    }
+    
+//    /*public void setFSAccountManager(FSAccountManager fsAccountManager) {
+//        this.fsAccountManager = fsAccountManager;
+//    }*/
     
 	@RequestMapping(method = RequestMethod.GET)
     public ModelAndView handleRequest()

@@ -93,8 +93,7 @@
                         <propertyfile>${project.build.outputDirectory}/jdbc.properties</propertyfile>
                         <skip>${skipTests}</skip>
                     </componentProperties>
-                </configuration>
-                <executions>
+                    <executions>
                     <execution>
                         <phase>process-test-resources</phase>
                         <goals>
@@ -102,6 +101,8 @@
                         </goals>
                     </execution>
                 </executions>
+                </configuration>
+                
                 <dependencies>
                     <dependency>
                         <groupId>${jdbc.groupId}</groupId>
@@ -125,8 +126,7 @@
                     <schema>${dbunit.schema}</schema>
                     <skip>${skipTests}</skip>
                     <transaction>true</transaction>
-                </configuration>
-                <executions>
+                    <executions>
                     <execution>
                         <id>test-compile</id>
                         <phase>test-compile</phase>
@@ -143,6 +143,8 @@
                         </goals>
                     </execution>
                 </executions>
+                </configuration>
+                
                 <dependencies>
                     <dependency>
                         <groupId>${jdbc.groupId}</groupId>
@@ -174,7 +176,7 @@
                 </configuration>
             </plugin>
             <!-- will package a ready-to-run app regarding hibernate-search index location -->
-            <plugin>
+           <!--  <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
@@ -190,11 +192,12 @@
                         </resource>
                     </webResources>
                 </configuration>
-            </plugin>
+            </plugin> -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>native2ascii-maven-plugin</artifactId>
                 <version>1.0-beta-1</version>
+                <configuration>
                 <executions>
                     <execution>
                         <id>native2ascii-utf8</id>
@@ -211,6 +214,8 @@
                         </configuration>
                     </execution>
                 </executions>
+                </configuration>
+                
             </plugin>
         </plugins>
         <resources>

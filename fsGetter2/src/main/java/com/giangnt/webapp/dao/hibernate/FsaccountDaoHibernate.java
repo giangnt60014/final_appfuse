@@ -1,5 +1,6 @@
 package com.giangnt.webapp.dao.hibernate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.appfuse.dao.hibernate.GenericDaoHibernate;
@@ -11,7 +12,6 @@ import com.giangnt.webapp.dao.FsaccountDao;
 import com.giangnt.webapp.model.Fsaccount;
 
 @Repository("fsaccountDao")
-@Transactional
 public class FsaccountDaoHibernate extends GenericDaoHibernate<Fsaccount, Long> implements FsaccountDao{
 
 	public FsaccountDaoHibernate() {
@@ -19,7 +19,11 @@ public class FsaccountDaoHibernate extends GenericDaoHibernate<Fsaccount, Long> 
 	}
 
 	public List<Fsaccount> findByAccount(String account) {
-		return getSession().createCriteria(Fsaccount.class).add(Restrictions.eq("account", account)).list();
+		@SuppressWarnings("unchecked")
+		List<Fsaccount> fsaccounts = new ArrayList<Fsaccount>();
+		fsaccounts = (List<Fsaccount>) getSession().createCriteria(Fsaccount.class).add(Restrictions.eq("account", account)).list(); 
+		fsaccounts = getSession().createQuery("from Fsaccount").list();
+		return fsaccounts;
 	}
 
 

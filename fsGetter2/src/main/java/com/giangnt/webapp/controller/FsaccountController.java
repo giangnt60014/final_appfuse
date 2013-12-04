@@ -36,7 +36,7 @@ public class FsaccountController {
 
 	@ModelAttribute("fsaccountList")
 	public Collection<Fsaccount> getAllAccount() {
-		List<Fsaccount> fsaccounts = fsaccountManager.findByAccount("");
+		List<Fsaccount> fsaccounts = fsaccountManager.findByAccount("giang");
 		return fsaccounts;
 	}
 

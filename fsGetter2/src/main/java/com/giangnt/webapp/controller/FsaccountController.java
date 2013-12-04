@@ -30,13 +30,12 @@ public class FsaccountController {
 	@RequestMapping(method = RequestMethod.GET)
 	public Fsaccount showForm(HttpServletRequest request,
 			HttpServletResponse response) {
-		List<Fsaccount> fsaccounts = fsaccountManager.findByAccount("giang");
-		return fsaccounts.get(0);
+		return new Fsaccount();
 	}
 
 	@ModelAttribute("fsaccountList")
 	public Collection<Fsaccount> getAllAccount() {
-		List<Fsaccount> fsaccounts = fsaccountManager.findByAccount("giang");
+		List<Fsaccount> fsaccounts = fsaccountManager.getAllAccount();
 		return fsaccounts;
 	}
 
@@ -47,7 +46,6 @@ public class FsaccountController {
 			String age = request.getParameter("age");
 			System.out.println(">>>>>>>>"+age);
 		}
-		
 		return null;
 
 	}

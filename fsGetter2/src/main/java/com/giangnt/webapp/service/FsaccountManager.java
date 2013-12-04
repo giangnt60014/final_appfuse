@@ -7,6 +7,8 @@ import org.appfuse.service.GenericManager;
 import com.giangnt.webapp.model.Fsaccount;
 
 public interface FsaccountManager extends GenericManager<Fsaccount, Long> {
-	 List<Fsaccount> findByAccount(String account);
+	
+	List<Fsaccount> getAllAccount();
+	List<Fsaccount> findByAccount(String account);
 
 }

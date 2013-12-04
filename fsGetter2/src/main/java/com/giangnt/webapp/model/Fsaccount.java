@@ -5,10 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
-import org.appfuse.model.BaseObject;
-
-@Entity(name = "fsaccount")
+@Entity
+@Table(name = "fsaccount")
 public class Fsaccount {
 	/**
 	 * 

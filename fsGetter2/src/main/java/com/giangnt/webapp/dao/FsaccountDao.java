@@ -11,4 +11,6 @@ public interface FsaccountDao extends GenericDao<Fsaccount, Long> {
 
 	@Transactional
 	public List<Fsaccount> findByAccount(String account);
+	
+	public List<Fsaccount> getAllAccount();
 }

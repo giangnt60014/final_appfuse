@@ -25,6 +25,13 @@ public class FsaccountDaoHibernate extends GenericDaoHibernate<Fsaccount, Long> 
 		return fsaccounts;
 	}
 
+	@Override
+	public List<Fsaccount> getAllAccount() {
+		// TODO Auto-generated method stub
+		System.out.println(">>>>>>"+Fsaccount.class.getName());
+		return getSession().createQuery("from "+Fsaccount.class.getName()).list();
+	}
+
 
 
 }

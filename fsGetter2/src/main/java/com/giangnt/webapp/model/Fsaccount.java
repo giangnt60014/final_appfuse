@@ -9,10 +9,23 @@ import javax.persistence.Id;
 import org.appfuse.model.BaseObject;
 
 @Entity(name = "fsaccount")
-public class Fsaccount extends BaseObject {
+public class Fsaccount {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	public Fsaccount() {
+	}
+
 	private Long id;
 	private String account;
 	private String security;
+
+	public Fsaccount(Long id, String account, String security) {
+		this.id = id;
+		this.account = account;
+		this.security = security;
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -41,9 +54,15 @@ public class Fsaccount extends BaseObject {
 	public void setSecurity(String security) {
 		this.security = security;
 	}
+/*
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
-	public boolean equals(Object arg0) {
+	public boolean equals(Object o) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -53,11 +72,5 @@ public class Fsaccount extends BaseObject {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+*/
 }

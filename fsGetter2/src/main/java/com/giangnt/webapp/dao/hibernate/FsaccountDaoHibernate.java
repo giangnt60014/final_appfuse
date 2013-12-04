@@ -22,7 +22,6 @@ public class FsaccountDaoHibernate extends GenericDaoHibernate<Fsaccount, Long> 
 		@SuppressWarnings("unchecked")
 		List<Fsaccount> fsaccounts = new ArrayList<Fsaccount>();
 		fsaccounts = (List<Fsaccount>) getSession().createCriteria(Fsaccount.class).add(Restrictions.eq("account", account)).list(); 
-		fsaccounts = getSession().createQuery("from Fsaccount").list();
 		return fsaccounts;
 	}
 

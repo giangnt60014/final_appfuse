@@ -17,15 +17,15 @@
 	
 
 	<!-- Add new DAOs here -->
-	<bean id="fsaccountDao" class="com.giangnt.webapp.dao.hibernate.FsaccountDaoHibernate">
+	<!-- <bean id="fsaccountDao" class="com.giangnt.webapp.dao.hibernate.FsaccountDaoHibernate">
 		<constructor-arg value="com.giangnt.webapp.model.Fsaccount" />
-	</bean>
+	</bean> -->
 
 	<!-- Add new Managers here -->
 
-	<bean id="fsaccountManager" class="com.giangnt.webapp.service.impl.FsaccountManagerImpl">
+	<!-- <bean id="fsaccountManager" class="com.giangnt.webapp.service.impl.FsaccountManagerImpl">
 		<constructor-arg ref="fsaccountDao" />
-	</bean>
+	</bean> -->
 	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
     	<property name="sessionFactory" ref="sessionFactory"></property>
 	</bean> 

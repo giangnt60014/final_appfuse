@@ -1,32 +1,55 @@
 package com.giangnt.webapp.controller;
 
+import java.util.Collection;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.giangnt.webapp.model.Fsaccount;
 import com.giangnt.webapp.service.FsaccountManager;
 
 @Controller
 @RequestMapping("/fsaccount*")
-public class FsaccountController{
+public class FsaccountController {
 	private FsaccountManager fsaccountManager = null;
 
 	@Autowired
 	public void setFsaccountManager(FsaccountManager fsaccountManager) {
 		this.fsaccountManager = fsaccountManager;
 	}
-	
+
+	@ModelAttribute
 	@RequestMapping(method = RequestMethod.GET)
-    public ModelAndView handleRequest()
-    throws Exception {
-		@SuppressWarnings("unused")
-		List<Fsaccount> fsaccounts = fsaccountManager.getAll();
-        return new ModelAndView().addObject(fsaccounts);
-    }
+	public Fsaccount showForm(HttpServletRequest request,
+			HttpServletResponse response) {
+		List<Fsaccount> fsaccounts = fsaccountManager.findByAccount("giang");
+		return fsaccounts.get(0);
+	}
+
+	@ModelAttribute("fsaccountList")
+	public Collection<Fsaccount> getAllAccount() {
+		List<Fsaccount> fsaccounts = fsaccountManager.findByAccount("");
+		return fsaccounts;
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public String onSubmit(Fsaccount fsaccount, BindingResult errors,
+			HttpServletRequest request, HttpServletResponse response) {
+		if(request.getParameter("action").equals("Add")){
+			String age = request.getParameter("age");
+			System.out.println(">>>>>>>>"+age);
+		}
+		
+		return null;
+
+	}
 
 }

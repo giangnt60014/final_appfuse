@@ -271,6 +271,18 @@
     </pluginRepositories>
 
     <dependencies>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.0-beta1</version>
+		</dependency>
+            
+		<dependency>
+	        <groupId>org.apache.httpcomponents</groupId>
+	        <artifactId>httpcore</artifactId>
+	        <version>4.0</version>
+	      </dependency>
+		            
         <dependency>
             <groupId>org.appfuse</groupId>
             <artifactId>appfuse-web</artifactId>
@@ -705,6 +717,6 @@
         <jdbc.driverClassName>com.mysql.jdbc.Driver</jdbc.driverClassName>
         <jdbc.url>jdbc:mysql://localhost/${db.name}?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8&amp;amp;autoReconnect=true</jdbc.url>
         <jdbc.username>root</jdbc.username>
-        <jdbc.password>root</jdbc.password>
+        <jdbc.password></jdbc.password>
     </properties>
 </project>

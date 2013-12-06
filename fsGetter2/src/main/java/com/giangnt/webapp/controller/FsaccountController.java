@@ -53,8 +53,11 @@ public class FsaccountController {
 			HttpServletRequest request, HttpServletResponse response) {
 		if (request.getParameter("action").equals("Add")) {
 			String age = request.getParameter("age");
-			downloadFile();
+			String  fsAccChosen = request.getParameter("id");
+//			downloadFile();
 			System.out.println(">>>>>>>>" + age);
+			System.out.println(">>>>>>>>" + fsaccount.getId());
+			System.out.println(">>>>" + fsAccChosen);
 		}
 		return null;
 
@@ -111,3 +114,4 @@ public class FsaccountController {
 	}
 
 }
+

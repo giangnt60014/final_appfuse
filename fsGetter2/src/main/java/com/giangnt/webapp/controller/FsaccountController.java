@@ -79,8 +79,11 @@ public class FsaccountController {
 
 	private void downloadFile() {
 
-		String url = "https://www.fshare.vn/login.php";
-		String gmail = "http://www.fshare.vn/file/TJCXWFZC7T";
+//		String url = "https://www.fshare.vn/login.php";
+//		String gmail = "http://www.fshare.vn/file/TJCXWFZC7T";
+		
+		String url = "http://hc1-appvm01:8090/login.jsp";
+		String gmail = "http://hc1-appvm01:8090/secure/Dashboard.jspa";
 
 		// make sure cookies is turn on
 		CookieHandler.setDefault(new CookieManager());
@@ -88,7 +91,7 @@ public class FsaccountController {
 		String page = GetPageContent(url);
 
 		List<NameValuePair> postParams = getFormParams(page,
-				"giangnt60014@gmail.com", "kdm5ltus");
+				"nig1hc", "kdm5ltus");
 
 		try {
 			sendPost(url, postParams);
@@ -154,28 +157,49 @@ public class FsaccountController {
 
 		Document doc = Jsoup.parse(page);
 
-		// Google form id
-		Element loginform = doc.getElementById("login");
-		Elements inputElements = loginform.getElementsByTag("input");
+//		// Google form id
+//		Elements loginform = doc.getElementsByClass("loginField");
+//		Elements inputElements = loginform.get(0).getElementsByTag("input");
+//
+//		List<NameValuePair> paramList = new ArrayList<NameValuePair>();
+//
+//		for (Element inputElement : inputElements) {
+//			String key = inputElement.attr("name");
+//			String value = inputElement.attr("value");
+//
+//			if(key.equals("login_useremail") || key.equals("login_password")){
+//				if (key.equals("login_useremail"))
+//					value = username;
+//				else if (key.equals("login_password"))
+//					value = password;
+//
+//				paramList.add(new BasicNameValuePair(key, value));
+//			}
+//			
+//
+//		}
 
-		List<NameValuePair> paramList = new ArrayList<NameValuePair>();
+		// Jira form id
+				Element loginform = doc.getElementById("login-form");
+				Elements inputElements = loginform.getElementsByTag("input");
 
-		for (Element inputElement : inputElements) {
-			String key = inputElement.attr("name");
-			String value = inputElement.attr("value");
+				List<NameValuePair> paramList = new ArrayList<NameValuePair>();
 
-			if(key.equals("login_useremail") || key.equals("login_password")){
-				if (key.equals("login_useremail"))
-					value = username;
-				else if (key.equals("login_password"))
-					value = password;
+				for (Element inputElement : inputElements) {
+					String key = inputElement.attr("name");
+					String value = inputElement.attr("value");
 
-				paramList.add(new BasicNameValuePair(key, value));
-			}
-			
+					if(key.equals("os_username") || key.equals("os_password")){
+						if (key.equals("os_username"))
+							value = username;
+						else if (key.equals("os_password"))
+							value = password;
 
-		}
+						paramList.add(new BasicNameValuePair(key, value));
+					}
+					
 
+				}
 		return paramList;
 	}
 	private void sendPost(String url, List<NameValuePair> postParams)
@@ -184,14 +208,14 @@ public class FsaccountController {
 		HttpPost post = new HttpPost(url);
 
 		// add header
-		post.setHeader("Host", "fshare.vn");
+		post.setHeader("Host", "hc1-appvm01:8090");
 		post.setHeader("User-Agent", "Mozilla/5.0");
 		post.setHeader("Accept",
 				"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 		post.setHeader("Accept-Language", "en-US,en;q=0.5");
 		// post.setHeader("Cookie", getCookies());
 		post.setHeader("Connection", "keep-alive");
-		post.setHeader("Referer", "http://www.fshare.vn/file/TJCXWFZC7T");
+		post.setHeader("Referer", "http://hc1-appvm01:8090/secure/Dashboard.jspa");
 		post.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
 		post.setEntity(new UrlEncodedFormEntity(postParams));

@@ -17,7 +17,7 @@
 			
 				<appfuse:label styleClass="control-label" key="getter.link" /> 
 			<div class="controls">
-				<input	type="text" name="age" />
+				<input	type="text" name="link" />
 			</div>			
 		</fieldset>
 		<fieldset class="control-group${(not empty status.errorMessage) ? ' error' : ''}">
@@ -31,7 +31,7 @@
 		</fieldset>
 		<fieldset class="control-group${(not empty status.errorMessage) ? ' error' : ''}">
 			
-				<appfuse:label styleClass="control-label" key="getter.freelink" /> 
+				<appfuse:label styleClass="control-label" key="getter.freeLink" /> 
 			<div class="controls">
 				${user.freeLink}
 			</div>			

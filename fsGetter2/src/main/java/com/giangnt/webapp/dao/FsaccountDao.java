@@ -13,4 +13,6 @@ public interface FsaccountDao extends GenericDao<Fsaccount, Long> {
 	public List<Fsaccount> findByAccount(String account);
 	
 	public List<Fsaccount> getAllAccount();
+
+	public void saveFsAccount(Fsaccount fsaccount);
 }

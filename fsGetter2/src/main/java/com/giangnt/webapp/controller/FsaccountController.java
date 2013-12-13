@@ -12,6 +12,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -29,6 +30,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -72,29 +74,38 @@ public class FsaccountController {
 	
 	@ModelAttribute("user")
 	public User getCurrentUser() {
-		User user = userManager.getUserByUsername("admin");
+		User user = (User) SecurityContextHolder.getContext()
+				.getAuthentication().getPrincipal();
 		return user;
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String onSubmit(Fsaccount fsaccount, BindingResult errors,
 			HttpServletRequest request, HttpServletResponse response) {
+		
 		if (request.getParameter("action").equals("Add")) {
-			String age = request.getParameter("age");
+			User user = (User) SecurityContextHolder.getContext()
+					.getAuthentication().getPrincipal();
+			String link = request.getParameter("link");
 			String fsAccChosen = request.getParameter("id");
-			downloadFile();
+			
+			if (downloadFile(Integer.parseInt(fsAccChosen), link)){
+				user.setFreeLink(user.getFreeLink()-1);
+				userManager.save(user);
+			}
+			System.out.println(user.getUsername() + " is logged in");
 		}
 		return null;
 
 	}
 
-	private void downloadFile() {
+	private boolean downloadFile(long accChosenId, String link) {
 
-//		String url = "https://www.fshare.vn/login.php";
+		String url = "https://www.fshare.vn/login.php";
 //		String gmail = "http://www.fshare.vn/file/TJCXWFZC7T";
 		
-		String url = "http://hc1-appvm01:8090/login.jsp";
-		String gmail = "http://hc1-appvm01:8090/secure/Dashboard.jspa";
+//		String url = "http://hc1-appvm01:8090/login.jsp";
+//		String gmail = "http://hc1-appvm01:8090/secure/Dashboard.jspa";
 
 		// make sure cookies is turn on
 		CookieHandler.setDefault(new CookieManager());
@@ -102,18 +113,19 @@ public class FsaccountController {
 		String page = GetPageContent(url);
 
 		List<NameValuePair> postParams = getFormParams(page,
-				"nig1hc", "");
+				fsaccountManager.get(accChosenId).getAccount(), fsaccountManager.get(accChosenId).getSecurity());
 
 		try {
-			sendPost(url, postParams);
+			sendPost(url, postParams, link);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		String result = GetPageContent(gmail);
-		System.out.println(result);
+//		String result = GetPageContent(gmail);
+//		System.out.println(result);
 
 		System.out.println("Done");
+		return true;
 
 	}
 
@@ -213,7 +225,7 @@ public class FsaccountController {
 				}
 		return paramList;
 	}
-	private void sendPost(String url, List<NameValuePair> postParams)
+	private Header[] sendPost(String url, List<NameValuePair> postParams, String link)
 			throws Exception {
 
 		HttpPost post = new HttpPost(url);
@@ -241,17 +253,7 @@ public class FsaccountController {
 		System.out.println("Post parameters : " + postParams);
 		System.out.println("Response Code : " + responseCode);
 
-		BufferedReader rd = new BufferedReader(new InputStreamReader(response
-				.getEntity().getContent()));
-
-		StringBuffer result = new StringBuffer();
-		String line = "";
-		while ((line = rd.readLine()) != null) {
-			result.append(line);
-		}
-
-		// System.out.println(result.toString());
-
+		return response.getHeaders("Cookie");
 	}
 
 	public String getCookies() {

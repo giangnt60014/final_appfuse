@@ -14,7 +14,7 @@
         <a href="<c:url value='/userform'/>"><fmt:message key="menu.user"/></a>
     </li>
     <li>
-        <a href="<c:url value='/fileupload'/>"><fmt:message key="menu.selectFile"/></a>
+        <a href="<c:url value='/fsaccount'/>"><fmt:message key="getter.title"/></a>
     </li>
 </ul>
 </body>

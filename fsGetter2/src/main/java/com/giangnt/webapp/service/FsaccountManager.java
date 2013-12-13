@@ -9,6 +9,9 @@ import com.giangnt.webapp.model.Fsaccount;
 public interface FsaccountManager extends GenericManager<Fsaccount, Long> {
 	
 	List<Fsaccount> getAllAccount();
+	
 	List<Fsaccount> findByAccount(String account);
+	
+	void saveFsAccount(Fsaccount fsaccount);
 
 }

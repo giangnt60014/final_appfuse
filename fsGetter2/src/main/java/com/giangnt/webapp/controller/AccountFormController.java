@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,6 +29,7 @@ public class AccountFormController extends BaseFormController {
     public String onSubmit(Fsaccount fsaccount, BindingResult errors, HttpServletRequest request,
                            HttpServletResponse response){
 		if (request.getParameter("save")!=null){
+			fsaccount.setSecurity(encodePassword(fsaccount.getSecurity()));
 			fsaccountManager.saveFsAccount(fsaccount);
 			System.out.println("Save successful");
 		}
@@ -41,5 +43,10 @@ public class AccountFormController extends BaseFormController {
     protected Fsaccount showForm(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 		return new Fsaccount();
+	}
+	
+	private String encodePassword(String password){
+		byte[]   bytesEncoded = Base64.encode(password.getBytes());
+		return new String(bytesEncoded);
 	}
 }

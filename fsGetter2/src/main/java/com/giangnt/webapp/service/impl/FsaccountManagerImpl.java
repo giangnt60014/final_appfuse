@@ -41,4 +41,10 @@ public class FsaccountManagerImpl extends GenericManagerImpl<Fsaccount, Long> im
 		fsaccountDao.saveFsAccount(fsaccount);
 	}
 
+	@Override
+	public Fsaccount getById(long accChosenId) {
+		// TODO Auto-generated method stub
+		return fsaccountDao.getById(accChosenId);
+	}
+
 }

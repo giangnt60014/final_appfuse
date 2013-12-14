@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.Header;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -48,12 +49,12 @@ public class FsaccountController {
 	private HttpClient client = new DefaultHttpClient();
 	private FsaccountManager fsaccountManager = null;
 	private UserManager userManager;
-	
+
 	@Autowired
 	public void setUserManager(UserManager userManager) {
 		this.userManager = userManager;
 	}
-	
+
 	@Autowired
 	public void setFsaccountManager(FsaccountManager fsaccountManager) {
 		this.fsaccountManager = fsaccountManager;
@@ -71,7 +72,7 @@ public class FsaccountController {
 		List<Fsaccount> fsaccounts = fsaccountManager.getAllAccount();
 		return fsaccounts;
 	}
-	
+
 	@ModelAttribute("user")
 	public User getCurrentUser() {
 		User user = (User) SecurityContextHolder.getContext()
@@ -82,15 +83,15 @@ public class FsaccountController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String onSubmit(Fsaccount fsaccount, BindingResult errors,
 			HttpServletRequest request, HttpServletResponse response) {
-		
+
 		if (request.getParameter("action").equals("Add")) {
 			User user = (User) SecurityContextHolder.getContext()
 					.getAuthentication().getPrincipal();
 			String link = request.getParameter("link");
 			String fsAccChosen = request.getParameter("id");
-			
-			if (downloadFile(Integer.parseInt(fsAccChosen), link)){
-				user.setFreeLink(user.getFreeLink()-1);
+
+			if (downloadFile(Integer.parseInt(fsAccChosen), link)) {
+				user.setFreeLink(user.getFreeLink() - 1);
 				userManager.save(user);
 			}
 			System.out.println(user.getUsername() + " is logged in");
@@ -102,29 +103,23 @@ public class FsaccountController {
 	private boolean downloadFile(long accChosenId, String link) {
 
 		String url = "https://www.fshare.vn/login.php";
-//		String gmail = "http://www.fshare.vn/file/TJCXWFZC7T";
-		
-//		String url = "http://hc1-appvm01:8090/login.jsp";
-//		String gmail = "http://hc1-appvm01:8090/secure/Dashboard.jspa";
+		link = "http://www.fshare.vn/file/TJCXWFZC7T";
 
 		// make sure cookies is turn on
 		CookieHandler.setDefault(new CookieManager());
 
-		String page = GetPageContent(url);
+		// String page = GetPageContent(url);
 
-		List<NameValuePair> postParams = getFormParams(page,
-				fsaccountManager.get(accChosenId).getAccount(), fsaccountManager.get(accChosenId).getSecurity());
+		List<NameValuePair> postParams = getFormParams(fsaccountManager
+				.getById(accChosenId).getAccount(),
+				fsaccountManager.getById(accChosenId).getSecurity());
 
 		try {
-			sendPost(url, postParams, link);
+			Header[] headers = sendPost(url, postParams, link);
+			System.out.println(headers.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-//		String result = GetPageContent(gmail);
-//		System.out.println(result);
-
-		System.out.println("Done");
 		return true;
 
 	}
@@ -174,88 +169,76 @@ public class FsaccountController {
 	}
 
 	// /////////////////////////////////////////////
-	private List<NameValuePair> getFormParams(String page, String username,
-			String password) {
-		System.out.println("Extracting form's data...");
-
-		Document doc = Jsoup.parse(page);
-
-//		// Google form id
-//		Elements loginform = doc.getElementsByClass("loginField");
-//		Elements inputElements = loginform.get(0).getElementsByTag("input");
-//
-//		List<NameValuePair> paramList = new ArrayList<NameValuePair>();
-//
-//		for (Element inputElement : inputElements) {
-//			String key = inputElement.attr("name");
-//			String value = inputElement.attr("value");
-//
-//			if(key.equals("login_useremail") || key.equals("login_password")){
-//				if (key.equals("login_useremail"))
-//					value = username;
-//				else if (key.equals("login_password"))
-//					value = password;
-//
-//				paramList.add(new BasicNameValuePair(key, value));
-//			}
-//			
-//
-//		}
-
-		// Jira form id
-				Element loginform = doc.getElementById("login-form");
-				Elements inputElements = loginform.getElementsByTag("input");
-
-				List<NameValuePair> paramList = new ArrayList<NameValuePair>();
-
-				for (Element inputElement : inputElements) {
-					String key = inputElement.attr("name");
-					String value = inputElement.attr("value");
-
-					if(key.equals("os_username") || key.equals("os_password")){
-						if (key.equals("os_username"))
-							value = username;
-						else if (key.equals("os_password"))
-							value = password;
-
-						paramList.add(new BasicNameValuePair(key, value));
-					}
-					
-
-				}
+	private List<NameValuePair> getFormParams(String username, String password) {
+		List<NameValuePair> paramList = new ArrayList<NameValuePair>();
+		paramList.add(new BasicNameValuePair("login_useremail", username));
+		paramList.add(new BasicNameValuePair("login_password", password));
 		return paramList;
 	}
-	private Header[] sendPost(String url, List<NameValuePair> postParams, String link)
-			throws Exception {
+
+	private Header[] sendPost(String url, List<NameValuePair> postParams,
+			String link) throws Exception {
 
 		HttpPost post = new HttpPost(url);
 
 		// add header
-		post.setHeader("Host", "hc1-appvm01:8090");
+		post.setHeader("Host", "www.fshare.vn");
 		post.setHeader("User-Agent", "Mozilla/5.0");
 		post.setHeader("Accept",
 				"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 		post.setHeader("Accept-Language", "en-US,en;q=0.5");
-		// post.setHeader("Cookie", getCookies());
 		post.setHeader("Connection", "keep-alive");
-		post.setHeader("Referer", "http://hc1-appvm01:8090/secure/Dashboard.jspa");
+		post.setHeader("Referer", link);
 		post.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
 		post.setEntity(new UrlEncodedFormEntity(postParams));
 
-		client.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
-		
+		client.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS,
+				true);
+
 		HttpResponse response = client.execute(post);
 
-		int responseCode = response.getStatusLine().getStatusCode();
 
-		System.out.println("\nSending 'POST' request to URL : " + url);
-		System.out.println("Post parameters : " + postParams);
-		System.out.println("Response Code : " + responseCode);
-
-		return response.getHeaders("Cookie");
+		String string = response.getHeaders("Set-Cookie").toString();
+		Header[] headers = response.getHeaders("Set-Cookie");
+		
+		sendGet(link, headers);
+		return response.getHeaders("Set-Cookie");
 	}
 
+	private String sendGet(String link, Header[] headers){
+		
+		StringBuffer result = null;
+		HttpGet get = new HttpGet(link);
+		get.setHeader("Host", "www.fshare.vn");
+		get.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
+		get.setHeader("Accept",
+				"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+		get.setHeader("Accept-Language", "en-US,en;q=0.5");
+		get.setHeader("Connection", "keep-alive");
+		String headerString = "";
+		for (Header header : headers) {
+			headerString += header.getValue();
+		}
+		get.setHeader("Cookie",headerString);
+//		get.setHeaders(headers);
+		get.setHeader("Content-Type", "application/x-www-form-urlencoded");
+		try {
+			client.getParams().setParameter(ClientPNames.REJECT_RELATIVE_REDIRECT,
+					true);
+			client.getParams().setParameter(ClientPNames.HANDLE_REDIRECTS,
+					false);
+			
+			HttpResponse response = client.execute(get);
+			System.out.println(response.getHeaders("Location"));
+			
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result.toString();
+	}
 	public String getCookies() {
 		return cookies;
 	}

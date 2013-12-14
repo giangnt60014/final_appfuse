@@ -37,6 +37,12 @@ public class FsaccountDaoHibernate extends GenericDaoHibernate<Fsaccount, Long> 
 		getSession().save(fsaccount);
 	}
 
+	@Override
+	public Fsaccount getById(long accChosenId) {
+		// TODO Auto-generated method stub
+		return (Fsaccount) getSession().get(Fsaccount.class, accChosenId);
+	}
+
 
 
 }

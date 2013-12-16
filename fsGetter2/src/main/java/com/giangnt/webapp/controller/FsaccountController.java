@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.giangnt.webapp.model.Fsaccount;
 import com.giangnt.webapp.service.FsaccountManager;
+import com.giangnt.webapp.util.NumberUtil;
 
 @Controller
 @RequestMapping("/fsaccount*")
@@ -109,7 +110,7 @@ public class FsaccountController extends BaseFormController {
 				.getAuthentication().getPrincipal();
 
 		String directLink = downloadFile(Integer.parseInt(account), link);
-		if (directLink!=null) {
+		if (directLink!=null && !directLink.isEmpty()) {
 			user.setFreeLink(user.getFreeLink() - 1);
 			userManager.save(user);
 		}
@@ -127,9 +128,11 @@ public class FsaccountController extends BaseFormController {
 		// make sure cookies is turn on
 		CookieHandler.setDefault(new CookieManager());
 
-		List<NameValuePair> postParams = getFormParams(fsaccountManager
-				.getById(accChosenId).getAccount(),
-				fsaccountManager.getById(accChosenId).getSecurity());
+		String username = fsaccountManager.getById(accChosenId).getAccount();
+		String password = fsaccountManager.getById(accChosenId).getSecurity();
+		String security = NumberUtil.decoded(password.substring(0, password.length()-4));
+		
+		List<NameValuePair> postParams = getFormParams(username,security);
 
 		try {
 			String directLink = sendGet(link,sendPost(url, postParams, link));

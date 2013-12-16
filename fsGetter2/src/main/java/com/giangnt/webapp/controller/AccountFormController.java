@@ -1,5 +1,7 @@
 package com.giangnt.webapp.controller;
 
+import java.util.Random;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.giangnt.webapp.model.Fsaccount;
 import com.giangnt.webapp.service.FsaccountManager;
+import com.giangnt.webapp.util.NumberUtil;
 
 @Controller
 @RequestMapping("/admin/accountform*")
@@ -29,7 +32,7 @@ public class AccountFormController extends BaseFormController {
     public String onSubmit(Fsaccount fsaccount, BindingResult errors, HttpServletRequest request,
                            HttpServletResponse response){
 		if (request.getParameter("save")!=null){
-			fsaccount.setSecurity(encodePassword(fsaccount.getSecurity()));
+			fsaccount.setSecurity(NumberUtil.encoded(fsaccount.getSecurity())+NumberUtil.randomString(4));
 			fsaccountManager.saveFsAccount(fsaccount);
 			System.out.println("Save successful");
 		}
@@ -45,8 +48,4 @@ public class AccountFormController extends BaseFormController {
 		return new Fsaccount();
 	}
 	
-	private String encodePassword(String password){
-		byte[]   bytesEncoded = Base64.encode(password.getBytes());
-		return new String(bytesEncoded);
-	}
 }

@@ -2,6 +2,7 @@
 <head>
 <title><fmt:message key="getter.title" /></title>
 <meta name="menu" content="GetterMenu" />
+<script type="text/javascript" src="<c:url value='/scripts/fsaccount.js'/>"></script>       
 </head>
 
 <div class="span3">
@@ -17,13 +18,13 @@
 			
 				<appfuse:label styleClass="control-label" key="getter.link" /> 
 			<div class="controls">
-				<input	type="text" name="link" />
+				<input	type="text" name="link" id="link"/>
 			</div>			
 		</fieldset>
 		<fieldset class="control-group${(not empty status.errorMessage) ? ' error' : ''}">
 			<appfuse:label styleClass="control-label" key="getter.account" /> 
 			<div class="controls">
-				<form:select path="id" id="customer" style="width: 150px">
+				<form:select path="id" id="account" style="width: 150px">
 				<form:options items="${fsaccountList}" itemLabel="account"
 				itemValue="id" />
 			</div>
@@ -33,20 +34,20 @@
 			
 				<appfuse:label styleClass="control-label" key="getter.freeLink" /> 
 			<div class="controls">
+			<label id="freeLink">${user.freeLink}</label>
 				${user.freeLink}
 			</div>			
 		</fieldset>
 		<fieldset class="form-actions">
-			<input type="submit" class="btn btn-primary" name="action"
-				id="submit" onclick="bCancel=false"
+			<input type="button" class="btn btn-primary" name="action"
+				id="submit" onclick="bCancel=false; getLink()"
 				value="<fmt:message key="button.add"/>" /> 
 				
 			<input type="submit"
 				class="btn btn-primary" name="cancel" id="cancel"
 				onclick="bCancel=true" value="<fmt:message key="button.cancel"/>" />
 		</fieldset>
-			
-
-		
 	</form:form>
+	<input	type="text" name="link" id="directLink"/>
+	
 </div>

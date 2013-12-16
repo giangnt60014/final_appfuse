@@ -1,8 +1,6 @@
 package com.giangnt.webapp.controller;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.util.ArrayList;
@@ -13,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.Header;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -26,26 +23,22 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.appfuse.model.User;
 import org.appfuse.service.UserManager;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.giangnt.webapp.model.Fsaccount;
 import com.giangnt.webapp.service.FsaccountManager;
 
 @Controller
 @RequestMapping("/fsaccount*")
-public class FsaccountController {
+public class FsaccountController extends BaseFormController {
 
-	private String cookies;
 	private HttpClient client = new DefaultHttpClient();
 	private FsaccountManager fsaccountManager = null;
 	private UserManager userManager;
@@ -60,6 +53,11 @@ public class FsaccountController {
 		this.fsaccountManager = fsaccountManager;
 	}
 
+	public FsaccountController() {
+		setCancelView("redirect:/fsaccount");
+		setSuccessView("redirect:/fsaccount");
+	}
+	
 	@ModelAttribute
 	@RequestMapping(method = RequestMethod.GET)
 	public Fsaccount showForm(HttpServletRequest request,
@@ -80,27 +78,48 @@ public class FsaccountController {
 		return user;
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
-	public String onSubmit(Fsaccount fsaccount, BindingResult errors,
-			HttpServletRequest request, HttpServletResponse response) {
+//	@RequestMapping(method = RequestMethod.POST)
+//	public String onSubmit(Fsaccount fsaccount, BindingResult errors,
+//			HttpServletRequest request, HttpServletResponse response) {
+//
+//		if (request.getParameter("action").equals("Add")) {
+//			User user = (User) SecurityContextHolder.getContext()
+//					.getAuthentication().getPrincipal();
+//			String link = request.getParameter("link");
+//			String fsAccChosen = request.getParameter("id");
+//
+//			if (downloadFile(Integer.parseInt(fsAccChosen), link)) {
+//				user.setFreeLink(user.getFreeLink() - 1);
+//				userManager.save(user);
+//			}
+//			System.out.println(user.getUsername() + " is logged in");
+//			request.setAttribute("linkkk", "aaaaa");
+//		}
+//		return getSuccessView();
+//
+//	}
+	
+	@RequestMapping(value = "/getLink", method = RequestMethod.GET)
+	public @ResponseBody
+	String getLink(
+			@RequestParam(value = "link", required = false) String link,
+			@RequestParam(value = "account", required = false) String account) {
+		
+		User user = (User) SecurityContextHolder.getContext()
+				.getAuthentication().getPrincipal();
 
-		if (request.getParameter("action").equals("Add")) {
-			User user = (User) SecurityContextHolder.getContext()
-					.getAuthentication().getPrincipal();
-			String link = request.getParameter("link");
-			String fsAccChosen = request.getParameter("id");
-
-			if (downloadFile(Integer.parseInt(fsAccChosen), link)) {
-				user.setFreeLink(user.getFreeLink() - 1);
-				userManager.save(user);
-			}
-			System.out.println(user.getUsername() + " is logged in");
+		String directLink = downloadFile(Integer.parseInt(account), link);
+		if (directLink!=null) {
+			user.setFreeLink(user.getFreeLink() - 1);
+			userManager.save(user);
 		}
-		return null;
-
+		System.out.println(user.getUsername() + " is logged in");
+		String xxx="https://www.fshare.vn/login.php";
+		
+		return xxx;
 	}
 
-	private boolean downloadFile(long accChosenId, String link) {
+	private String downloadFile(long accChosenId, String link) {
 
 		String url = "https://www.fshare.vn/login.php";
 		link = "http://www.fshare.vn/file/TJCXWFZC7T";
@@ -108,67 +127,20 @@ public class FsaccountController {
 		// make sure cookies is turn on
 		CookieHandler.setDefault(new CookieManager());
 
-		// String page = GetPageContent(url);
-
 		List<NameValuePair> postParams = getFormParams(fsaccountManager
 				.getById(accChosenId).getAccount(),
 				fsaccountManager.getById(accChosenId).getSecurity());
 
 		try {
-			Header[] headers = sendPost(url, postParams, link);
-			System.out.println(headers.toString());
+			String directLink = sendGet(link,sendPost(url, postParams, link));
+			return directLink;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return true;
+		return null;
 
 	}
 
-	private String GetPageContent(String url) {
-		HttpGet request = new HttpGet(url);
-
-		request.setHeader("User-Agent", "Mozilla/5.0");
-		request.setHeader("Accept",
-				"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-		request.setHeader("Accept-Language", "en-US,en;q=0.5");
-
-		HttpResponse response;
-		try {
-			response = client.execute(request);
-			int responseCode = response.getStatusLine().getStatusCode();
-
-			System.out.println("\nSending 'GET' request to URL : " + url);
-			System.out.println("Response Code : " + responseCode);
-
-			try {
-				BufferedReader rd;
-				rd = new BufferedReader(new InputStreamReader(response
-						.getEntity().getContent()));
-				StringBuffer result = new StringBuffer();
-				String line = "";
-				while ((line = rd.readLine()) != null) {
-					result.append(line);
-				}
-				// set cookies
-				setCookies(response.getFirstHeader("Set-Cookie") == null ? ""
-						: response.getFirstHeader("Set-Cookie").toString());
-
-				return result.toString();
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (ClientProtocolException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		return url;
-	}
-
-	// /////////////////////////////////////////////
 	private List<NameValuePair> getFormParams(String username, String password) {
 		List<NameValuePair> paramList = new ArrayList<NameValuePair>();
 		paramList.add(new BasicNameValuePair("login_useremail", username));
@@ -197,18 +169,13 @@ public class FsaccountController {
 				true);
 
 		HttpResponse response = client.execute(post);
-
-
-		String string = response.getHeaders("Set-Cookie").toString();
 		Header[] headers = response.getHeaders("Set-Cookie");
 		
-		sendGet(link, headers);
-		return response.getHeaders("Set-Cookie");
+		return headers;
 	}
 
 	private String sendGet(String link, Header[] headers){
 		
-		StringBuffer result = null;
 		HttpGet get = new HttpGet(link);
 		get.setHeader("Host", "www.fshare.vn");
 		get.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
@@ -221,29 +188,20 @@ public class FsaccountController {
 			headerString += header.getValue();
 		}
 		get.setHeader("Cookie",headerString);
-//		get.setHeaders(headers);
 		get.setHeader("Content-Type", "application/x-www-form-urlencoded");
 		try {
-			client.getParams().setParameter(ClientPNames.REJECT_RELATIVE_REDIRECT,
-					true);
 			client.getParams().setParameter(ClientPNames.HANDLE_REDIRECTS,
 					false);
 			
 			HttpResponse response = client.execute(get);
 			System.out.println(response.getHeaders("Location"));
+			return response.getHeaders("Location")[0].toString();
 			
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return result.toString();
-	}
-	public String getCookies() {
-		return cookies;
-	}
-
-	public void setCookies(String cookies) {
-		this.cookies = cookies;
+		return null;
 	}
 }

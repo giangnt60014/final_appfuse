@@ -79,26 +79,6 @@ public class FsaccountController extends BaseFormController {
 		return user;
 	}
 
-//	@RequestMapping(method = RequestMethod.POST)
-//	public String onSubmit(Fsaccount fsaccount, BindingResult errors,
-//			HttpServletRequest request, HttpServletResponse response) {
-//
-//		if (request.getParameter("action").equals("Add")) {
-//			User user = (User) SecurityContextHolder.getContext()
-//					.getAuthentication().getPrincipal();
-//			String link = request.getParameter("link");
-//			String fsAccChosen = request.getParameter("id");
-//
-//			if (downloadFile(Integer.parseInt(fsAccChosen), link)) {
-//				user.setFreeLink(user.getFreeLink() - 1);
-//				userManager.save(user);
-//			}
-//			System.out.println(user.getUsername() + " is logged in");
-//			request.setAttribute("linkkk", "aaaaa");
-//		}
-//		return getSuccessView();
-//
-//	}
 	
 	@RequestMapping(value = "/getLink", method = RequestMethod.GET)
 	public @ResponseBody

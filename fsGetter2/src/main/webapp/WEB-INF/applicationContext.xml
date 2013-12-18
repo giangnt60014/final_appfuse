@@ -34,7 +34,7 @@
 		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
 		<property name="hibernateProperties">
 			<value>
-				hibernate.search.default.indexBase=${project.build.finalName}/index
+				hibernate.search.default.indexBase=fsgetter/index
 				hibernate.dialect=${hibernate.dialect}
 			</value>
 		</property>

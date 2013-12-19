@@ -722,8 +722,8 @@
         <jdbc.artifactId>mysql-connector-java</jdbc.artifactId>
         <jdbc.version>5.1.22</jdbc.version>
         <jdbc.driverClassName>com.mysql.jdbc.Driver</jdbc.driverClassName>
-        <jdbc.url>jdbc:mysql://ec2-50-19-213-178.compute-1.amazonaws.com:3306/${db.name}?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8&amp;amp;autoReconnect=true</jdbc.url>
-        <jdbc.username>fsgetter</jdbc.username>
-        <jdbc.password>kdm5ltus0949591393</jdbc.password>
+        <jdbc.url>jdbc:mysql://localhost/${db.name}?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8&amp;amp;autoReconnect=true</jdbc.url>
+        <jdbc.username>root</jdbc.username>
+        <jdbc.password>root</jdbc.password>
     </properties>
 </project>

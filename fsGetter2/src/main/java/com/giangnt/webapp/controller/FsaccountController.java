@@ -97,13 +97,13 @@ public class FsaccountController extends BaseFormController {
 		System.out.println(user.getUsername() + " is logged in");
 		String xxx="https://www.fshare.vn/login.php";
 		
-		return xxx;
+		return directLink;
 	}
 
 	private String downloadFile(long accChosenId, String link) {
 
 		String url = "https://www.fshare.vn/login.php";
-		link = "http://www.fshare.vn/file/TJCXWFZC7T";
+//		link = "http://www.fshare.vn/file/TJCXWFZC7T";
 
 		// make sure cookies is turn on
 		CookieHandler.setDefault(new CookieManager());

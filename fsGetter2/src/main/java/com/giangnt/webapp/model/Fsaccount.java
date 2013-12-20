@@ -20,11 +20,13 @@ public class Fsaccount {
 	private Long id;
 	private String account;
 	private String security;
+	private Long using;
 
-	public Fsaccount(Long id, String account, String security) {
+	public Fsaccount(Long id, String account, String security, Long using) {
 		this.id = id;
 		this.account = account;
 		this.security = security;
+		this.using = using;
 	}
 
 	@Id
@@ -53,5 +55,20 @@ public class Fsaccount {
 
 	public void setSecurity(String security) {
 		this.security = security;
+	}
+
+	/**
+	 * @return the using
+	 */
+	@Column(name="using")
+	public Long getUsing() {
+		return using;
+	}
+
+	/**
+	 * @param using the using to set
+	 */
+	public void setUsing(Long using) {
+		this.using = using;
 	}
 }

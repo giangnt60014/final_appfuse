@@ -55,7 +55,7 @@ public class FsaccountController extends BaseFormController {
 	}
 
 	public FsaccountController() {
-		setCancelView("redirect:/fsaccount");
+		setCancelView("redirect:/mainMenu");
 		setSuccessView("redirect:/fsaccount");
 	}
 	
@@ -84,18 +84,26 @@ public class FsaccountController extends BaseFormController {
 	public @ResponseBody
 	String getLink(
 			@RequestParam(value = "link", required = false) String link,
-			@RequestParam(value = "account", required = false) String account) {
+			@RequestParam(value = "account", required = false) String accountId) {
 		
 		User user = (User) SecurityContextHolder.getContext()
 				.getAuthentication().getPrincipal();
+		if(link.contains("folder")){
+			
+		}else{
+			
+		}
 
-		String directLink = downloadFile(Integer.parseInt(account), link);
+		String directLink = downloadFile(Integer.parseInt(accountId), link);
 		if (directLink!=null && !directLink.isEmpty()) {
 			user.setFreeLink(user.getFreeLink() - 1);
 			userManager.save(user);
+
+			Fsaccount accountChosen = fsaccountManager.getById(Integer.parseInt(accountId));
+			accountChosen.setUsing(accountChosen.getUsing()+1);
+			fsaccountManager.saveFsAccount(accountChosen);
 		}
 		System.out.println(user.getUsername() + " is logged in");
-		String xxx="https://www.fshare.vn/login.php";
 		
 		return directLink;
 	}
@@ -178,7 +186,7 @@ public class FsaccountController extends BaseFormController {
 			
 			HttpResponse response = client.execute(get);
 			System.out.println(response.getHeaders("Location"));
-			return response.getHeaders("Location")[0].toString();
+			return response.getHeaders("Location")[0].getValue().toString();
 			
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();

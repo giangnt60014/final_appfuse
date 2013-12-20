@@ -35,19 +35,19 @@
 				<appfuse:label styleClass="control-label" key="getter.freeLink" /> 
 			<div class="controls">
 			<label id="freeLink">${user.freeLink}</label>
-				${user.freeLink}
 			</div>			
 		</fieldset>
 		<fieldset class="form-actions">
 			<input type="button" class="btn btn-primary" name="action"
 				id="submit" onclick="bCancel=false; getLink()"
-				value="<fmt:message key="button.add"/>" /> 
+				value="<fmt:message key="button.getLink"/>" /> 
 				
 			<input type="submit"
 				class="btn btn-primary" name="cancel" id="cancel"
 				onclick="bCancel=true" value="<fmt:message key="button.cancel"/>" />
 		</fieldset>
 	</form:form>
-	<input	type="text" name="link" id="directLink"/>
+
+	<textarea rows="10" cols="1" id="directLink" name="link" style="width: 200px;"></textarea>
 	
 </div>

@@ -27,19 +27,16 @@ public class FsaccountDaoHibernate extends GenericDaoHibernate<Fsaccount, Long> 
 
 	@Override
 	public List<Fsaccount> getAllAccount() {
-		// TODO Auto-generated method stub
 		return getSession().createQuery("from "+Fsaccount.class.getName()).list();
 	}
 
 	@Override
 	public void saveFsAccount(Fsaccount fsaccount) {
-		// TODO Auto-generated method stub
 		getSession().save(fsaccount);
 	}
 
 	@Override
 	public Fsaccount getById(long accChosenId) {
-		// TODO Auto-generated method stub
 		return (Fsaccount) getSession().get(Fsaccount.class, accChosenId);
 	}
 

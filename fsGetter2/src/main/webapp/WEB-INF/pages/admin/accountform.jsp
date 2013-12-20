@@ -38,7 +38,7 @@
         </spring:bind>
             <appfuse:label styleClass="control-label" key="getter.security"/>
             <div class="controls">
-                <form:input path="security" id="security"/>
+                <form:input path="security" id="security" type="password"/>
                 <form:errors path="security" cssClass="help-inline"/>
             </div>
         </fieldset>

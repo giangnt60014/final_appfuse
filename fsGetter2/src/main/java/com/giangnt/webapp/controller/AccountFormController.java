@@ -1,12 +1,11 @@
 package com.giangnt.webapp.controller;
 
-import java.util.Random;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,6 +27,11 @@ public class AccountFormController extends BaseFormController {
 		this.fsaccountManager = fsaccountManager;
 	}
 	
+	public AccountFormController() {
+		setCancelView("redirect:/fsaccount");
+		setSuccessView("redirect:/admin/users");
+	}
+	
 	@RequestMapping(method = RequestMethod.POST)
     public String onSubmit(Fsaccount fsaccount, BindingResult errors, HttpServletRequest request,
                            HttpServletResponse response){
@@ -35,9 +39,10 @@ public class AccountFormController extends BaseFormController {
 			fsaccount.setSecurity(NumberUtil.encoded(fsaccount.getSecurity())+NumberUtil.randomString(4));
 			fsaccountManager.saveFsAccount(fsaccount);
 			System.out.println("Save successful");
+			saveMessage(request, getText("user.saved", fsaccount.getAccount(), Locale.ENGLISH));
 		}
 		
-		return null;
+		return getSuccessView();
 				
 	}
 	

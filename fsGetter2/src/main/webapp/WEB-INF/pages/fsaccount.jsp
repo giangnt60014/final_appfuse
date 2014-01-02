@@ -1,7 +1,7 @@
 <%@ include file="/common/taglibs.jsp"%>
 <head>
 <title><fmt:message key="getter.title" /></title>
-<meta name="menu" content="GetterMenu" />
+<meta name="menu" content="GetterMenu" charset="UTF-8"/>
 <script type="text/javascript" src="<c:url value='/scripts/fsaccount.js'/>"></script>       
 </head>
 
@@ -48,6 +48,19 @@
 		</fieldset>
 	</form:form>
 
-	<textarea rows="10" cols="1" id="directLink" name="link" style="width: 200px;"></textarea>
+	<appfuse:label styleClass="control-label" key="getter.directLink" />
+	<textarea rows="10" cols="1" id="directLink" name="link" style="width:1027px;height:150px"></textarea>
+	<form action="https://www.baokim.vn/payment/product/version11" method="get" accept-charset="UTF-8">
+<input type="hidden" name="business" value="giangnt60014@gmail.com">
+<input type="hidden" name="product_name" value="VIP 1 tháng">
+<input type="hidden" name="product_price" value="10000">
+<input type="hidden" name="product_quantity" value="1">
+<input type="hidden" name="total_amount" value="10000">
+<input type="hidden" name="url_detail" value="">
+<input type="hidden" name="url_success" value="">
+<input type="hidden" name="url_cancel" value="">
+<input type="hidden" name="order_description" value="">
+<input type="hidden" name="id" value="">
+<input type="image" src="http://developer.baokim.vn/uploads/baokim_btn/thanhtoanantoan-s.png" border="0" name="submit" alt="Thanh toán an toàn với Bảo Kim !" title="Thanh toán trực tuyến an toàn dùng tài khoản Ngân hàng (VietcomBank, TechcomBank, Đông Á, VietinBank, Quân Đội, VIB, SHB,... và thẻ Quốc tế (Visa, Master Card...) qua Cổng thanh toán trực tuyến BảoKim.vn"></form>
 	
 </div>

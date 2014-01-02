@@ -60,7 +60,7 @@ public class Fsaccount {
 	/**
 	 * @return the using
 	 */
-	@Column(name="using")
+	@Column(name="noOfUse")
 	public Long getUsing() {
 		return using;
 	}

@@ -72,12 +72,15 @@ public class FsaccountController extends BaseFormController {
 		return fsaccounts;
 	}
 
-	@ModelAttribute("user")
-	public User getCurrentUser() {
-		User user = (User) SecurityContextHolder.getContext()
-				.getAuthentication().getPrincipal();
-		return user;
-	}
+//	@ModelAttribute("user")
+//	public User getCurrentUser() {
+//		User user = (User) SecurityContextHolder.getContext()
+//				.getAuthentication().getPrincipal();
+//		if(user.getUsername()!=null && user.getUsername().isEmpty()){
+//			return user;
+//		}
+//		return null;
+//	}
 
 	
 	@RequestMapping(value = "/getLink", method = RequestMethod.GET)

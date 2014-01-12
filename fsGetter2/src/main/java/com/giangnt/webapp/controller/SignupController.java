@@ -68,6 +68,7 @@ public class SignupController extends BaseFormController {
 
         // Set the default user role on this new user
         user.addRole(roleManager.getRole(Constants.USER_ROLE));
+        user.setFreeLink(100);
 
         try {
             this.getUserManager().saveUser(user);

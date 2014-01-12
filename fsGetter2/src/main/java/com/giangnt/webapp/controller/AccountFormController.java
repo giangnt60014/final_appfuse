@@ -5,6 +5,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.appfuse.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -36,7 +37,8 @@ public class AccountFormController extends BaseFormController {
     public String onSubmit(Fsaccount fsaccount, BindingResult errors, HttpServletRequest request,
                            HttpServletResponse response){
 		if (request.getParameter("save")!=null){
-			fsaccount.setSecurity(NumberUtil.encoded(fsaccount.getSecurity())+NumberUtil.randomString(4));
+			fsaccount.setUsing((long) 0);
+			fsaccount.setSecurity(NumberUtil.randomString(Constants.DECODE_VERSION)+NumberUtil.encoded(fsaccount.getSecurity()));
 			fsaccountManager.saveFsAccount(fsaccount);
 			System.out.println("Save successful");
 			saveMessage(request, getText("user.saved", fsaccount.getAccount(), Locale.ENGLISH));

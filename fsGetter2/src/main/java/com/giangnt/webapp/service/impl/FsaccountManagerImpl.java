@@ -44,4 +44,10 @@ public class FsaccountManagerImpl extends GenericManagerImpl<Fsaccount, Long> im
 		return fsaccountDao.getById(accChosenId);
 	}
 
+	@Override
+	public void updateFsAccount(Fsaccount accountChosen) {
+		fsaccountDao.updateFsAccount(accountChosen);
+		
+	}
+
 }

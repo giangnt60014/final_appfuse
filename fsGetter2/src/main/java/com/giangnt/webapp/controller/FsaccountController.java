@@ -21,6 +21,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.appfuse.Constants;
 import org.appfuse.model.User;
 import org.appfuse.service.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +107,7 @@ public class FsaccountController extends BaseFormController {
 
 			Fsaccount accountChosen = fsaccountManager.getById(Integer.parseInt(accountId));
 			accountChosen.setUsing(accountChosen.getUsing()+1);
-			fsaccountManager.saveFsAccount(accountChosen);
+			fsaccountManager.updateFsAccount(accountChosen);
 		}
 		System.out.println(user.getUsername() + " is logged in");
 		
@@ -123,7 +124,7 @@ public class FsaccountController extends BaseFormController {
 
 		String username = fsaccountManager.getById(accChosenId).getAccount();
 		String password = fsaccountManager.getById(accChosenId).getSecurity();
-		String security = NumberUtil.decoded(password.substring(0, password.length()-4));
+		String security = NumberUtil.decoded(password.substring(Constants.DECODE_VERSION, password.length()));
 		
 		List<NameValuePair> postParams = getFormParams(username,security);
 

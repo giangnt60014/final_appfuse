@@ -25,12 +25,12 @@
 			<appfuse:label styleClass="control-label" key="getter.account" /> 
 			<div class="controls">
 				<form:select path="id" id="account" style="width: 150px">
-				<form:options items="${fsaccountList}" itemLabel="account"
+				<form:options items="${fsaccountList}" itemLabel="id"
 				itemValue="id" />
 			</div>
 		</form:select>		
 		</fieldset>
-		<fieldset class="control-group${(not empty status.errorMessage) ? ' error' : ''}">
+		<fieldset style="display:none" class="control-group${(not empty status.errorMessage) ? ' error' : ''}">
 			
 				<appfuse:label styleClass="control-label" key="getter.freeLink" /> 
 			<div class="controls">

@@ -13,6 +13,7 @@ public final class Constants {
     }
     //~ Static fields/initializers =============================================
 
+    public static final Integer DECODE_VERSION = 8;
     /**
      * Assets Version constant
      */

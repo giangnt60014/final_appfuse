@@ -17,4 +17,6 @@ public interface FsaccountDao extends GenericDao<Fsaccount, Long> {
 	public void saveFsAccount(Fsaccount fsaccount);
 
 	public Fsaccount getById(long accChosenId);
+
+	public void updateFsAccount(Fsaccount accountChosen);
 }

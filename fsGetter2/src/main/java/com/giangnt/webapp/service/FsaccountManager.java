@@ -16,4 +16,6 @@ public interface FsaccountManager extends GenericManager<Fsaccount, Long> {
 
 	Fsaccount getById(long accChosenId);
 
+	void updateFsAccount(Fsaccount accountChosen);
+
 }

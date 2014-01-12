@@ -40,6 +40,11 @@ public class FsaccountDaoHibernate extends GenericDaoHibernate<Fsaccount, Long> 
 		return (Fsaccount) getSession().get(Fsaccount.class, accChosenId);
 	}
 
+	@Override
+	public void updateFsAccount(Fsaccount accountChosen) {
+		getSession().update(accountChosen);
+	}
+
 
 
 }

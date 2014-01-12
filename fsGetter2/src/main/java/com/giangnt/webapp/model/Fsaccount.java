@@ -48,7 +48,7 @@ public class Fsaccount {
 		this.account = account;
 	}
 
-	@Column(name="security", length=50)
+	@Column(name="security", length=150)
 	public String getSecurity() {
 		return security;
 	}

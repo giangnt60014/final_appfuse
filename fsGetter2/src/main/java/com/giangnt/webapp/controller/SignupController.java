@@ -89,11 +89,11 @@ public class SignupController extends BaseFormController {
         saveMessage(request, getText("user.registered", user.getUsername(), locale));
         request.getSession().setAttribute(Constants.REGISTERED, Boolean.TRUE);
 
-        // log user in automatically
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                user.getUsername(), user.getConfirmPassword(), user.getAuthorities());
-        auth.setDetails(user);
-        SecurityContextHolder.getContext().setAuthentication(auth);
+//        // log user in automatically
+//        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+//                user.getUsername(), user.getConfirmPassword(), user.getAuthorities());
+//        auth.setDetails(user);
+//        SecurityContextHolder.getContext().setAuthentication(auth);
 
         // Send user an e-mail
         if (log.isDebugEnabled()) {

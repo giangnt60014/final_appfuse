@@ -50,6 +50,11 @@
 
 	<appfuse:label styleClass="control-label" key="getter.directLink" />
 	<textarea rows="10" cols="1" id="directLink" name="link" style="width:1027px;height:150px"></textarea>
+	<% response.setHeader("Cache-Control","no-cache"); //HTTP 1.1 
+	   response.setHeader("Pragma","no-cache"); //HTTP 1.0 
+	   response.setDateHeader ("Expires", 0); //prevents caching at the proxy server 
+	   response.setDateHeader("Expires", 0);
+	%>
 <!-- 	<form action="https://www.baokim.vn/payment/product/version11" method="get" accept-charset="UTF-8">
 <input type="hidden" name="business" value="giangnt60014@gmail.com">
 <input type="hidden" name="product_name" value="VIP 1 tháng">

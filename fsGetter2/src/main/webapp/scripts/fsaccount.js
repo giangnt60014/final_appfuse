@@ -10,6 +10,8 @@ function getLink(){
 			cache: false
 		}).responseText; //Load Sections from db depends on customerId
 		 $("#directLink").val(directLink);
+		 var d = new Date();
+		 document.cookie = "cookiename=1;expires=" + d.toGMTString() + ";" + ";";
 	}else{
 		alert("No free link available");
 	}

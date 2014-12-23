@@ -1,5 +1,12 @@
 <%@ include file="/common/taglibs.jsp" %>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
 
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 <head>
     <title><fmt:message key="signup.title"/></title>
 </head>
@@ -83,7 +90,7 @@
         </spring:bind>
             <appfuse:label styleClass="control-label" key="user.email"/>
             <div class="controls">
-                <form:input path="email" id="email"/>
+                <form:input path="email" id="email" data-toggle="tooltip" data-placement="left" title="Tooltip on left"/>
                 <form:errors path="email" cssClass="help-inline"/>
             </div>
         </fieldset>
@@ -154,5 +161,6 @@
     $(document).ready(function() {
         $("input[type='text']:visible:enabled:first", document.forms['signupForm']).focus();
     });
+    $('#email').tooltip(options);
 </script>
 </c:set>

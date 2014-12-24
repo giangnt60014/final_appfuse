@@ -90,7 +90,10 @@
         </spring:bind>
             <appfuse:label styleClass="control-label" key="user.email"/>
             <div class="controls">
-                <form:input path="email" id="email" data-toggle="tooltip" data-placement="left" title="Tooltip on left"/>
+                <form:input path="email" id="email" data-toggle="popover"
+                title="Email warning" data-trigger="focus"
+                data-content="Please enter your real email so that activation email can come correctly."
+                />
                 <form:errors path="email" cssClass="help-inline"/>
             </div>
         </fieldset>
@@ -161,6 +164,12 @@
     $(document).ready(function() {
         $("input[type='text']:visible:enabled:first", document.forms['signupForm']).focus();
     });
-    $('#email').tooltip(options);
+    $('#email').popover('show');
 </script>
+<style>
+.popover-title{
+	background-color: #D64432;
+	color:white;
+}
+</style>
 </c:set>

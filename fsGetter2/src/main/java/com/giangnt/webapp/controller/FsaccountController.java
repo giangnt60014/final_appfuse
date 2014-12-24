@@ -68,6 +68,10 @@ public class FsaccountController extends BaseFormController {
 	@RequestMapping(method = RequestMethod.GET)
 	public Fsaccount showForm(HttpServletRequest request,
 			HttpServletResponse response) {
+		String ipAddress = request.getHeader("X-FORWARDED-FOR");  
+		if (ipAddress == null) {  
+		   ipAddress = request.getRemoteAddr();  
+		}
 		return new Fsaccount();
 	}
 
@@ -116,7 +120,6 @@ public class FsaccountController extends BaseFormController {
 		}
 		System.out.println(user.getUsername() + " is logged in get "
 				+ directLink);
-
 		return directLink;
 	}
 
@@ -199,11 +202,7 @@ public class FsaccountController extends BaseFormController {
 				"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 		get.setHeader("Accept-Language", "en-US,en;q=0.5");
 		get.setHeader("Connection", "close");
-		// String headerString = "";
-		// for (Header header : headers) {
-		// headerString += header.getValue();
-		// }
-		// get.setHeader("Cookie",headerString);
+		get.setHeader("X-FORWARDED-FOR", ipAddress);
 		get.setHeader("Content-Type", "application/x-www-form-urlencoded");
 		try {
 			client.getParams().setParameter(ClientPNames.HANDLE_REDIRECTS,

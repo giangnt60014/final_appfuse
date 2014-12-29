@@ -1,4 +1,9 @@
 <%@ include file="/common/taglibs.jsp"%>
+<link href="//vjs.zencdn.net/4.11/video-js.css" rel="stylesheet">
+<script src="//vjs.zencdn.net/4.11/video.js"></script>
+<script type="text/javascript">
+  document.createElement('video');document.createElement('audio');document.createElement('track');
+</script>
 <head>
 <title><fmt:message key="getter.title" /></title>
 <meta name="menu" content="GetterMenu" charset="UTF-8"/>
@@ -41,7 +46,9 @@
 			<input type="button" class="btn btn-primary" name="action"
 				id="submit" onclick="bCancel=false; getLink()"
 				value="<fmt:message key="button.getLink"/>" /> 
-				
+			<input type="button" class="btn btn-primary" name="action"
+				id="submit" onclick="bCancel=false; getLink1()"
+				value="<fmt:message key="button.getLink"/>" /> 	
 			<input type="submit"
 				class="btn btn-primary" name="cancel" id="cancel"
 				onclick="bCancel=true" value="<fmt:message key="button.cancel"/>" />
@@ -55,6 +62,13 @@
 	   response.setDateHeader ("Expires", 0); //prevents caching at the proxy server 
 	   response.setDateHeader("Expires", 0);
 	%>
+	<video id="example_video_1" class="video-js vjs-default-skin"
+	  controls preload="auto" width="640" height="264"
+	  poster="http://video-js.zencoder.com/oceans-clip.png"
+	  data-setup='{"example_option":true}'>
+	 <source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4' />
+	 <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+	</video>
 <!-- 	<form action="https://www.baokim.vn/payment/product/version11" method="get" accept-charset="UTF-8">
 <input type="hidden" name="business" value="giangnt60014@gmail.com">
 <input type="hidden" name="product_name" value="VIP 1 tháng">
@@ -69,3 +83,4 @@
 <input type="image" src="http://developer.baokim.vn/uploads/baokim_btn/thanhtoanantoan-s.png" border="0" name="submit" alt="Thanh toán an toàn với Bảo Kim !" title="Thanh toán trực tuyến an toàn dùng tài khoản Ngân hàng (VietcomBank, TechcomBank, Đông Á, VietinBank, Quân Đội, VIB, SHB,... và thẻ Quốc tế (Visa, Master Card...) qua Cổng thanh toán trực tuyến BảoKim.vn"></form>
 	 -->
 </div>
+	

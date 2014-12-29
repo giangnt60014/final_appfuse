@@ -1,23 +1,22 @@
 package com.giangnt.webapp.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.CookieHandler;
 import java.net.CookieManager;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -29,18 +28,18 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.appfuse.Constants;
 import org.appfuse.model.User;
 import org.appfuse.service.UserManager;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,6 +57,9 @@ public class FsaccountController extends BaseFormController {
 	private FsaccountManager fsaccountManager = null;
 	private UserManager userManager;
 	private String ipAddress;
+	private HttpsURLConnection conn;
+	private List<String> cookies;
+	private final String USER_AGENT = "Mozilla/5.0";
 
 	@Autowired
 	public void setUserManager(UserManager userManager) {
@@ -78,9 +80,9 @@ public class FsaccountController extends BaseFormController {
 	@RequestMapping(method = RequestMethod.GET)
 	public Fsaccount showForm(HttpServletRequest request,
 			HttpServletResponse response) {
-		String ipAddress = request.getHeader("X-FORWARDED-FOR");  
-		if (ipAddress == null) {  
-		   ipAddress = request.getRemoteAddr();  
+		String ipAddress = request.getHeader("X-FORWARDED-FOR");
+		if (ipAddress == null) {
+			ipAddress = request.getRemoteAddr();
 		}
 		return new Fsaccount();
 	}
@@ -135,19 +137,19 @@ public class FsaccountController extends BaseFormController {
 
 	private String downloadFile(long accChosenId, String link) {
 
-		String url = "https://www.fshare.vn/login.php";
+		String url = "https://www.fshare.vn/";
 
 		// make sure cookies is turn on
-//		CookieHandler.setDefault(new CookieManager());
+		// CookieHandler.setDefault(new CookieManager());
 
 		String username = fsaccountManager.getById(accChosenId).getAccount();
 		String password = fsaccountManager.getById(accChosenId).getSecurity();
 		String security = NumberUtil.decoded(password.substring(
 				Constants.DECODE_VERSION, password.length()));
 
-		List<NameValuePair> postParams = getFormParams(username, security);
-
 		try {
+			List<NameValuePair> postParams = getFormParams(url, username,
+					security);
 			String directLink = sendGet(link, sendPost(url, postParams, link));
 			logout();
 			return directLink;
@@ -159,11 +161,61 @@ public class FsaccountController extends BaseFormController {
 		}
 	}
 
-	private List<NameValuePair> getFormParams(String username, String password) {
+	private List<NameValuePair> getFormParams(String url, String username,
+			String password) throws IOException {
+		// make sure cookies is turn on
 		List<NameValuePair> paramList = new ArrayList<NameValuePair>();
-		paramList.add(new BasicNameValuePair("login_useremail", username));
-		paramList.add(new BasicNameValuePair("login_password", password));
+		paramList.add(new BasicNameValuePair("fs_csrf", this
+				.GetPageContent(url)));
+
+		paramList.add(new BasicNameValuePair("LoginForm[email]", username));
+		paramList.add(new BasicNameValuePair("LoginForm[password]", password));
 		return paramList;
+	}
+
+	private String GetPageContent(String url) throws IOException {
+
+		URL obj = new URL(url);
+		conn = (HttpsURLConnection) obj.openConnection();
+
+		// default is GET
+		conn.setRequestMethod("GET");
+
+		conn.setUseCaches(false);
+
+		// act like a browser
+		conn.setRequestProperty("User-Agent", USER_AGENT);
+		conn.setRequestProperty("Accept",
+				"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+		conn.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+		if (cookies != null) {
+			for (String cookie : this.cookies) {
+				conn.addRequestProperty("Cookie", cookie.split(";", 1)[0]);
+			}
+		}
+		int responseCode = conn.getResponseCode();
+		System.out.println("\nSending 'GET' request to URL : " + url);
+		System.out.println("Response Code : " + responseCode);
+
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				conn.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+
+		while ((inputLine = in.readLine()) != null) {
+			if (inputLine.contains("csrf")) {
+				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+				System.out.println(inputLine);
+			}
+			response.append(inputLine);
+		}
+		in.close();
+
+		// Get the response cookies
+		setCookies(conn.getHeaderFields().get("Set-Cookie"));
+
+		return response.toString();
+
 	}
 
 	private Header[] sendPost(String url, List<NameValuePair> postParams,
@@ -178,7 +230,7 @@ public class FsaccountController extends BaseFormController {
 				"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 		post.setHeader("Accept-Language", "en-US,en;q=0.5");
 		post.setHeader("Connection", "keep-alive");
-		post.setHeader("Referer", "http://www.fshare.vn");
+		post.setHeader("Referer", "https://www.fshare.vn/login");
 		post.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
 		post.setEntity(new UrlEncodedFormEntity(postParams));
@@ -222,11 +274,12 @@ public class FsaccountController extends BaseFormController {
 			ClientConnectionManager clientConnectionManager = client
 					.getConnectionManager();
 
-			if(response.getHeaders("Location") !=null && response.getHeaders("Location").length>0){
+			if (response.getHeaders("Location") != null
+					&& response.getHeaders("Location").length > 0) {
 				direcLk = response.getHeaders("Location")[0].getValue()
 						.toString();
 			}
-			
+
 			response.getEntity().consumeContent();
 			InputStream is = response.getEntity().getContent();
 			is.close();
@@ -279,4 +332,13 @@ public class FsaccountController extends BaseFormController {
 		}
 		return null;
 	}
+
+	public List<String> getCookies() {
+		return cookies;
+	}
+
+	public void setCookies(List<String> cookies) {
+		this.cookies = cookies;
+	}
+
 }

@@ -2,9 +2,11 @@ package com.giangnt.webapp.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -47,9 +49,13 @@ import com.giangnt.webapp.util.RequestUtil;
 
 @Controller
 @RequestMapping("/fsaccount*")
-public class FsaccountController extends BaseFormController {
+public class FsaccountController extends BaseFormController implements Serializable {
 
-	private HttpClient client;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5256970539504686733L;
+	private HttpClient client = new DefaultHttpClient();;
 	private FsaccountManager fsaccountManager = null;
 	private UserManager userManager;
 	private String ipAddress;
@@ -118,26 +124,24 @@ public class FsaccountController extends BaseFormController {
 
 		User user = (User) SecurityContextHolder.getContext()
 				.getAuthentication().getPrincipal();
-		if (link.contains("folder")) {
-
-		} else {
-
-		}
+//		if (link.contains("folder")) {
+//
+//		} else {
+//
+//		}
 		System.out.println("Client Ip: " + ipAddress);
-		client = new DefaultHttpClient();
+		
 		String directLink = downloadFile(request, Integer.parseInt(accountId),
 				link.trim());
 		if (directLink != null && !directLink.isEmpty()) {
 			user.setFreeLink(user.getFreeLink() - 1);
 			userManager.save(user);
 
-			Fsaccount accountChosen = fsaccountManager.getById(Integer
-					.parseInt(accountId));
+			Fsaccount accountChosen = fsaccountManager.getById(Integer.parseInt(accountId));
 			accountChosen.setUsing(accountChosen.getUsing() + 1);
 			fsaccountManager.updateFsAccount(accountChosen);
 		}
-		System.out.println(user.getUsername() + " is logged in get "
-				+ directLink);
+		System.out.println(user.getUsername() + " is logged in get " + directLink);
 		return directLink;
 	}
 
@@ -146,7 +150,7 @@ public class FsaccountController extends BaseFormController {
 		String url = "https://www.fshare.vn/";
 
 		// make sure cookies is turn on
-		// CookieHandler.setDefault(new CookieManager());
+		CookieHandler.setDefault(new CookieManager());
 
 		String username = fsaccountManager.getById(accChosenId).getAccount();
 		String password = fsaccountManager.getById(accChosenId).getSecurity();
@@ -156,9 +160,15 @@ public class FsaccountController extends BaseFormController {
 		try {
 			List<NameValuePair> postParams = getFormParams(url, username,
 					security);
+			CookieStore cookieStore = (CookieStore) httpContext.getAttribute(ClientContext.COOKIE_STORE);
+			for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
+				if(cookie.getName().equals("")){
+					String directLink = sendGet(request, link);
+					return directLink;
+				}
+			}
 			sendPost(url, postParams, link);
 			String directLink = sendGet(request, link);//, sendPost(url, postParams, link));
-			logout();
 			return directLink;
 		} catch (Exception e) {
 			logout();
@@ -208,7 +218,6 @@ public class FsaccountController extends BaseFormController {
 		for (int i = 0; i < headers.length; i++) {
 			System.out.println(headers[i].getValue().toString());
 		}
-		
 		return headers;
 		
 	}
@@ -245,23 +254,23 @@ public class FsaccountController extends BaseFormController {
 						.toString();
 			}
 
-			response.getEntity().consumeContent();
-			InputStream is = response.getEntity().getContent();
-			is.close();
-			get.abort();
-			response.setHeader(
-					"Set-Cookie",
-					"fshare_userpass=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain=.fshare.vn; httponly"
-							+ "fshare_userid=-1; expires=Mon, 26-Jan-2015 07:31:16 GMT; path=/; domain=.fshare.vn; httponly"
-							+ "fshare_a_userid=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain=.fshare.vn; httponly"
-							+ "fshare_a_userpass=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain=.fshare.vn; httponly"
-							+ "fshare_a_sessionid=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain=.fshare.vn; httponly");
+//			response.getEntity().consumeContent();
+//			InputStream is = response.getEntity().getContent();
+//			is.close();
+//			get.abort();
+//			response.setHeader(
+//					"Set-Cookie",
+//					"fshare_userpass=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain=.fshare.vn; httponly"
+//							+ "fshare_userid=-1; expires=Mon, 26-Jan-2015 07:31:16 GMT; path=/; domain=.fshare.vn; httponly"
+//							+ "fshare_a_userid=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain=.fshare.vn; httponly"
+//							+ "fshare_a_userpass=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain=.fshare.vn; httponly"
+//							+ "fshare_a_sessionid=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain=.fshare.vn; httponly");
 			// clientConnectionManager.shutdown();\
-			for (Cookie cookie : request.getCookies()) {
-				RequestUtil.deleteCookie((HttpServletResponse) response, cookie, "/getLink");
-			}
-			cookieStore.clear();
-			httpContext.setAttribute(ClientContext.COOKIE_STORE,cookieStore);
+//			for (Cookie cookie : request.getCookies()) {
+//				RequestUtil.deleteCookie((HttpServletResponse) response, cookie, "/getLink");
+//			}
+//			cookieStore.clear();
+//			httpContext.setAttribute(ClientContext.COOKIE_STORE,cookieStore);
 			return direcLk;
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();

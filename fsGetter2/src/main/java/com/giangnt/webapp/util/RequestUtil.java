@@ -1,8 +1,18 @@
 package com.giangnt.webapp.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -110,4 +120,43 @@ public final class RequestUtil {
         url.append(request.getContextPath());
         return url.toString();
     }
+    
+    public static String getCRSF(String url) throws IOException {
+    	HttpsURLConnection conn;
+    	final String USER_AGENT = "Mozilla/5.0";
+		URL obj = new URL(url);
+		conn = (HttpsURLConnection) obj.openConnection();
+
+		// default is GET
+		conn.setRequestMethod("GET");
+
+		conn.setUseCaches(false);
+
+		// act like a browser
+		conn.setRequestProperty("User-Agent", USER_AGENT);
+		conn.setRequestProperty("Accept",
+				"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+		conn.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+		int responseCode = conn.getResponseCode();
+		System.out.println("\nSending 'GET' request to URL : " + url);
+		System.out.println("Response Code : " + responseCode);
+
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				conn.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+
+		while ((inputLine = in.readLine()) != null) {
+			if (inputLine.contains("csrf")) {
+				Document doc = Jsoup.parse(inputLine);
+				Elements inputElements = doc.getElementsByTag("input");
+				for (Element inputElement : inputElements) {
+					String value = inputElement.attr("value");
+					return value;
+				}
+			}
+		}
+		return response.toString();
+
+	}
 }

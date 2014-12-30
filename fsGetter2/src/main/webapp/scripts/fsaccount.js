@@ -3,7 +3,7 @@ function getLink(){
 	if(freeLink>0){
 		var link = $("#link").val(); //link to get direct link
 		var account = $("#account").val(); //Chosen account
-		var directLink = $.ajax({ url: 'fsaccount/getLink1?link='+link+'&account='+account, 
+		var directLink = $.ajax({ url: 'fsaccount/getLink?link='+link+'&account='+account, 
 			data: {}, 
 			dataType: 'json', 
 			async: false,
@@ -15,7 +15,4 @@ function getLink(){
 	}else{
 		alert("No free link available");
 	}
-}
-function getLink1(){
-	window.location.href("fsaccount/getLink1");
 }

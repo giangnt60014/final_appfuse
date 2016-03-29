@@ -1,15 +1,15 @@
-import net.haxx.curl.CurlGlue;
+/*import net.haxx.curl.CurlGlue;
 
-/*
+
  * Test class to login to eBay
  * change the username and password to yours.
- */
+ 
 public class Main {
 	public final static String username = "MY_EBAY_USERNAME";
 	public final static String password = "MY_EBAY_PASSWORD";
 
 	public int handleString(byte s[]) {
-		/* output everything */
+		 output everything 
 		try {
 			System.out.write(s);
 		} catch (java.io.IOException e) {
@@ -66,4 +66,4 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-}
+}*/

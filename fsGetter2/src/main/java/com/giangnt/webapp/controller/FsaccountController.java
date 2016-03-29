@@ -1,32 +1,33 @@
 package com.giangnt.webapp.controller;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.net.CookieHandler;
 import java.net.CookieManager;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -55,7 +56,7 @@ public class FsaccountController extends BaseFormController implements Serializa
 	 * 
 	 */
 	private static final long serialVersionUID = 5256970539504686733L;
-	private HttpClient client = new DefaultHttpClient();;
+	private CloseableHttpClient client = HttpClients.createDefault();
 	private FsaccountManager fsaccountManager = null;
 	private UserManager userManager;
 	private String ipAddress;
@@ -168,7 +169,7 @@ public class FsaccountController extends BaseFormController implements Serializa
 				}
 			}
 			sendPost(url, postParams, link);
-			String directLink = sendGet(request, link);//, sendPost(url, postParams, link));
+			String directLink = sendGet(request, link);
 			return directLink;
 		} catch (Exception e) {
 			logout();
@@ -186,6 +187,9 @@ public class FsaccountController extends BaseFormController implements Serializa
 
 		paramList.add(new BasicNameValuePair("LoginForm[email]", username));
 		paramList.add(new BasicNameValuePair("LoginForm[password]", password));
+		paramList.add(new BasicNameValuePair("LoginForm[checkloginpopup]", "0"));
+		paramList.add(new BasicNameValuePair("LoginForm[rememberMe]", "0"));
+		paramList.add(new BasicNameValuePair("yt0", "Đăng nhập"));
 		return paramList;
 	}
 
@@ -195,24 +199,25 @@ public class FsaccountController extends BaseFormController implements Serializa
 	 */
 	private Header[] sendPost(String url, List<NameValuePair> postParams,
 			String link) throws Exception {
-
-		HttpPost post = new HttpPost(url);
+		HttpPost post = new HttpPost("https://www.fshare.vn/login");
 		// add header
-		post.setHeader("Host", "www.fshare.vn");
-		post.setHeader("User-Agent", "Mozilla/5.0");
-		post.setHeader("Accept",
+		post.setHeader(HttpHeaders.HOST, "www.fshare.vn");
+//		post.setHeader("User-Agent", "Mozilla/5.0");
+		post.setHeader(HttpHeaders.ACCEPT,
 				"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-		post.setHeader("Accept-Language", "en-US,en;q=0.5");
-		post.setHeader("Connection", "keep-alive");
-		post.setHeader("Referer", "https://www.fshare.vn/login");
-		post.setHeader("Content-Type", "application/x-www-form-urlencoded");
+//		post.setHeader("Accept-Language", "en-US,en;q=0.5");
+//		post.setHeader("Connection", "keep-alive");
+		post.setHeader(HttpHeaders.REFERER, "https://www.fshare.vn/");
+		post.setHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
+		post.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate");
 
-		post.setEntity(new UrlEncodedFormEntity(postParams));
+		HttpEntity entity = new UrlEncodedFormEntity(postParams);
+		post.setEntity(entity);
+		System.out.println(entity.toString());
 
-		client.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS,
-				true);
-
-		HttpResponse response = client.execute(post, httpContext);
+		RequestConfig config = RequestConfig.custom().setCircularRedirectsAllowed(true).build();
+		post.setConfig(config);
+		CloseableHttpResponse response = client.execute(post);
 		post.abort();
 		Header[] headers = response.getHeaders("Set-Cookie");
 		for (int i = 0; i < headers.length; i++) {
@@ -241,36 +246,18 @@ public class FsaccountController extends BaseFormController implements Serializa
 		get.setHeader("X-FORWARDED-FOR", ipAddress);
 		get.setHeader("Content-Type", "application/x-www-form-urlencoded");
 		try {
-			client.getParams().setParameter(ClientPNames.HANDLE_REDIRECTS,
-					false);
+//			client.getParams().setParameter(ClientPNames.HANDLE_REDIRECTS,
+//					false);
 
 			HttpResponse response = client.execute(get, httpContext);
-			ClientConnectionManager clientConnectionManager = client
-					.getConnectionManager();
+//			ClientConnectionManager clientConnectionManager = client
+//					.getConnectionManager();
 
 			if (response.getHeaders("Location") != null
 					&& response.getHeaders("Location").length > 0) {
 				direcLk = response.getHeaders("Location")[0].getValue()
 						.toString();
 			}
-
-//			response.getEntity().consumeContent();
-//			InputStream is = response.getEntity().getContent();
-//			is.close();
-//			get.abort();
-//			response.setHeader(
-//					"Set-Cookie",
-//					"fshare_userpass=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain=.fshare.vn; httponly"
-//							+ "fshare_userid=-1; expires=Mon, 26-Jan-2015 07:31:16 GMT; path=/; domain=.fshare.vn; httponly"
-//							+ "fshare_a_userid=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain=.fshare.vn; httponly"
-//							+ "fshare_a_userpass=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain=.fshare.vn; httponly"
-//							+ "fshare_a_sessionid=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain=.fshare.vn; httponly");
-			// clientConnectionManager.shutdown();\
-//			for (Cookie cookie : request.getCookies()) {
-//				RequestUtil.deleteCookie((HttpServletResponse) response, cookie, "/getLink");
-//			}
-//			cookieStore.clear();
-//			httpContext.setAttribute(ClientContext.COOKIE_STORE,cookieStore);
 			return direcLk;
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();

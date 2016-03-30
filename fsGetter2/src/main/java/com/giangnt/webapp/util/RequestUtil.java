@@ -2,20 +2,30 @@ package com.giangnt.webapp.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  * Convenience class for setting and retrieving cookies.
@@ -25,57 +35,59 @@ public final class RequestUtil {
 
     /**
      * Checkstyle rule: utility classes should not have public constructor
+     * @throws IOException 
+     * @throws ClientProtocolException 
      */
-    private RequestUtil() {
+    private RequestUtil(){
     }
 
-    /**
-     * Convenience method to set a cookie
-     *
-     * @param response the current response
-     * @param name the name of the cookie
-     * @param value the value of the cookie
-     * @param path the path to set it on
-     */
-    public static void setCookie(HttpServletResponse response, String name,
-                                 String value, String path) {
-        if (log.isDebugEnabled()) {
-            log.debug("Setting cookie '" + name + "' on path '" + path + "'");
-        }
-
-        Cookie cookie = new Cookie(name, value);
-        cookie.setSecure(false);
-        cookie.setPath(path);
-        cookie.setMaxAge(3600 * 24 * 30); // 30 days
-
-        response.addCookie(cookie);
-    }
-
-    /**
-     * Convenience method to get a cookie by name
-     *
-     * @param request the current request
-     * @param name the name of the cookie to find
-     *
-     * @return the cookie (if found), null if not found
-     */
-    public static Cookie getCookie(HttpServletRequest request, String name) {
-        Cookie[] cookies = request.getCookies();
-        Cookie returnCookie = null;
-
-        if (cookies == null) {
-            return returnCookie;
-        }
-
-        for (final Cookie thisCookie : cookies) {
-            if (thisCookie.getName().equals(name) && !"".equals(thisCookie.getValue())) {
-                returnCookie = thisCookie;
-                break;
-            }
-        }
-
-        return returnCookie;
-    }
+//    /**
+//     * Convenience method to set a cookie
+//     *
+//     * @param response the current response
+//     * @param name the name of the cookie
+//     * @param value the value of the cookie
+//     * @param path the path to set it on
+//     */
+//    public static void setCookie(HttpServletResponse response, String name,
+//                                 String value, String path) {
+//        if (log.isDebugEnabled()) {
+//            log.debug("Setting cookie '" + name + "' on path '" + path + "'");
+//        }
+//
+//        Cookie cookie = new Cookie(name, value);
+//        cookie.setSecure(false);
+//        cookie.setPath(path);
+//        cookie.setMaxAge(3600 * 24 * 30); // 30 days
+//
+//        response.addCookie(cookie);
+//    }
+//
+//    /**
+//     * Convenience method to get a cookie by name
+//     *
+//     * @param request the current request
+//     * @param name the name of the cookie to find
+//     *
+//     * @return the cookie (if found), null if not found
+//     */
+//    public static Cookie getCookie(HttpServletRequest request, String name) {
+//        Cookie[] cookies = request.getCookies();
+//        Cookie returnCookie = null;
+//
+//        if (cookies == null) {
+//            return returnCookie;
+//        }
+//
+//        for (final Cookie thisCookie : cookies) {
+//            if (thisCookie.getName().equals(name) && !"".equals(thisCookie.getValue())) {
+//                returnCookie = thisCookie;
+//                break;
+//            }
+//        }
+//
+//        return returnCookie;
+//    }
 
     /**
      * Convenience method for deleting a cookie by name
@@ -121,30 +133,21 @@ public final class RequestUtil {
         return url.toString();
     }
     
-    public static String getCRSF(String url) throws IOException {
-    	HttpsURLConnection conn;
-    	final String USER_AGENT = "Mozilla/5.0";
-		URL obj = new URL(url);
-		conn = (HttpsURLConnection) obj.openConnection();
-
-		// default is GET
-		conn.setRequestMethod("GET");
-
-		conn.setUseCaches(false);
-
-		// act like a browser
-		conn.setRequestProperty("User-Agent", USER_AGENT);
-		conn.setRequestProperty("Accept",
-				"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-		conn.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-		int responseCode = conn.getResponseCode();
+    public static Map<String,String> getCRSF(String url) throws IOException {
+    	Map<String,String> map = new LinkedHashMap<String, String>();
+    	HttpClient client = HttpClientBuilder.create().build();
+    	HttpGet request = new HttpGet("https://www.fshare.vn");
+    	HttpResponse response = client.execute(request);
+		int responseCode = response.getStatusLine().getStatusCode();
+		String setCookie =  response.getHeaders("Set-Cookie")[0].getValue();
+		String sessionid = setCookie.substring(setCookie.indexOf("=")+1, setCookie.indexOf(";"));
+		map.put("sessionid", sessionid);
 		System.out.println("\nSending 'GET' request to URL : " + url);
 		System.out.println("Response Code : " + responseCode);
-
+		InputStream body = response.getEntity().getContent();
 		BufferedReader in = new BufferedReader(new InputStreamReader(
-				conn.getInputStream()));
+				body));
 		String inputLine;
-		StringBuffer response = new StringBuffer();
 
 		while ((inputLine = in.readLine()) != null) {
 			if (inputLine.contains("csrf")) {
@@ -152,11 +155,12 @@ public final class RequestUtil {
 				Elements inputElements = doc.getElementsByTag("input");
 				for (Element inputElement : inputElements) {
 					String value = inputElement.attr("value");
-					return value;
+					map.put("csrf", value);
+					return map;
 				}
 			}
 		}
-		return response.toString();
+		return null;
 
 	}
 }

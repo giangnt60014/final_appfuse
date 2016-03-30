@@ -8,26 +8,27 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -56,11 +57,10 @@ public class FsaccountController extends BaseFormController implements Serializa
 	 * 
 	 */
 	private static final long serialVersionUID = 5256970539504686733L;
-	private CloseableHttpClient client = HttpClients.createDefault();
+	private CloseableHttpClient client = HttpClientBuilder.create().disableRedirectHandling().build();
 	private FsaccountManager fsaccountManager = null;
 	private UserManager userManager;
 	private String ipAddress;
-	private List<String> cookies;
 	CookieStore cookieStore = new BasicCookieStore();
 	HttpContext httpContext = new BasicHttpContext();
 	
@@ -92,7 +92,6 @@ public class FsaccountController extends BaseFormController implements Serializa
 	@RequestMapping(method = RequestMethod.GET)
 	public Fsaccount showForm(HttpServletRequest request,
 			HttpServletResponse response) {
-		httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 		String ipAddress = request.getHeader("X-FORWARDED-FOR");
 		if (ipAddress == null) {
 			ipAddress = request.getRemoteAddr();
@@ -161,13 +160,13 @@ public class FsaccountController extends BaseFormController implements Serializa
 		try {
 			List<NameValuePair> postParams = getFormParams(url, username,
 					security);
-			CookieStore cookieStore = (CookieStore) httpContext.getAttribute(ClientContext.COOKIE_STORE);
-			for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
-				if(cookie.getName().equals("")){
-					String directLink = sendGet(request, link);
-					return directLink;
-				}
-			}
+//			CookieStore cookieStore = (CookieStore) httpContext.getAttribute(ClientContext.COOKIE_STORE);
+//			for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
+//				if(cookie.getName().equals("")){
+//					String directLink = sendGet(request, link);
+//					return directLink;
+//				}
+//			}
 			sendPost(url, postParams, link);
 			String directLink = sendGet(request, link);
 			return directLink;
@@ -182,9 +181,14 @@ public class FsaccountController extends BaseFormController implements Serializa
 	private List<NameValuePair> getFormParams(String url, String username,
 			String password) throws IOException {
 		List<NameValuePair> paramList = new ArrayList<NameValuePair>();
-		paramList.add(new BasicNameValuePair("fs_csrf", RequestUtil
-				.getCRSF(url)));
-
+//		Map<String, String> map = RequestUtil.getCRSF(url);
+//		BasicClientCookie cookie = new BasicClientCookie("JSESSIONID", map.get("sessionid"));
+//		cookieStore.addCookie(cookie);
+//		cookie.setDomain("");
+//		cookie.setPath("");
+//		cookieStore.addCookie(cookie);
+//		httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+//		paramList.add(new BasicNameValuePair("fs_csrf", map.get("csrf")));
 		paramList.add(new BasicNameValuePair("LoginForm[email]", username));
 		paramList.add(new BasicNameValuePair("LoginForm[password]", password));
 		paramList.add(new BasicNameValuePair("LoginForm[checkloginpopup]", "0"));
@@ -199,7 +203,13 @@ public class FsaccountController extends BaseFormController implements Serializa
 	 */
 	private Header[] sendPost(String url, List<NameValuePair> postParams,
 			String link) throws Exception {
-		HttpPost post = new HttpPost("https://www.fshare.vn/login");
+		Map<String, String> map = RequestUtil.getCRSF(url);
+		postParams.add(new BasicNameValuePair("fs_csrf", map.get("csrf")));
+		
+		HttpPost post = new HttpPost("https://www.fshare.vn/login/");
+		String body = URLEncodedUtils.format(postParams, StandardCharsets.UTF_8); // use encoding of request
+		StringEntity entity = new StringEntity(body);
+		post.setEntity(entity);
 		// add header
 		post.setHeader(HttpHeaders.HOST, "www.fshare.vn");
 //		post.setHeader("User-Agent", "Mozilla/5.0");
@@ -208,13 +218,10 @@ public class FsaccountController extends BaseFormController implements Serializa
 //		post.setHeader("Accept-Language", "en-US,en;q=0.5");
 //		post.setHeader("Connection", "keep-alive");
 		post.setHeader(HttpHeaders.REFERER, "https://www.fshare.vn/");
-		post.setHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
+		post.setHeader(HttpHeaders.CONTENT_TYPE, URLEncodedUtils.CONTENT_TYPE);
 		post.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate");
-
-		HttpEntity entity = new UrlEncodedFormEntity(postParams);
-		post.setEntity(entity);
-		System.out.println(entity.toString());
-
+		
+		post.setHeader("Cookie", "session_id="+ map.get("sessionid"));
 		RequestConfig config = RequestConfig.custom().setCircularRedirectsAllowed(true).build();
 		post.setConfig(config);
 		CloseableHttpResponse response = client.execute(post);
@@ -246,8 +253,6 @@ public class FsaccountController extends BaseFormController implements Serializa
 		get.setHeader("X-FORWARDED-FOR", ipAddress);
 		get.setHeader("Content-Type", "application/x-www-form-urlencoded");
 		try {
-//			client.getParams().setParameter(ClientPNames.HANDLE_REDIRECTS,
-//					false);
 
 			HttpResponse response = client.execute(get, httpContext);
 //			ClientConnectionManager clientConnectionManager = client
@@ -274,7 +279,7 @@ public class FsaccountController extends BaseFormController implements Serializa
 		User user = (User) SecurityContextHolder.getContext()
 				.getAuthentication().getPrincipal();
 
-		HttpGet get = new HttpGet("http://www.fshare.vn/logout.php");
+		HttpGet get = new HttpGet("http://www.fshare.vn/logout");
 		get.setHeader("Host", "www.fshare.vn");
 		get.setHeader(
 				"User-Agent",
@@ -291,6 +296,7 @@ public class FsaccountController extends BaseFormController implements Serializa
 			response.setHeader("Pragma", "no-cache");
 			System.out
 					.println(user.getUsername() + " is logged out of Fshare!");
+			get.releaseConnection();
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

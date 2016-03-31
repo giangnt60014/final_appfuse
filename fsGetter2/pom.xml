@@ -739,8 +739,8 @@
         <jdbc.artifactId>postgresql</jdbc.artifactId>
         <jdbc.version>8.1-407.jdbc3</jdbc.version>
         <jdbc.driverClassName>org.postgresql.Driver</jdbc.driverClassName>
-        <jdbc.url>postgres://mhgqlkxxvboaek:IHTpWHcfXmt8rfapreIz2TP_c0@ec2-54-225-112-119.compute-1.amazonaws.com:5432/d950bl1j0iag1a</jdbc.url>
-        <jdbc.username>mhgqlkxxvboaek</jdbc.username>
-        <jdbc.password>IHTpWHcfXmt8rfapreIz2TP_c0</jdbc.password>
+        <jdbc.url>postgres://xjmkvzzfvnrmup:894rvefg5FzGEOOFrO7V8tb4i-@ec2-54-225-112-119.compute-1.amazonaws.com:5432/d3kjr9mmaaj979</jdbc.url>
+        <jdbc.username>xjmkvzzfvnrmup</jdbc.username>
+        <jdbc.password>894rvefg5FzGEOOFrO7V8tb4i-</jdbc.password>
     </properties>
 </project>

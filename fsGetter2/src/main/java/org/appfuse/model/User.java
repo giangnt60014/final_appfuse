@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -33,6 +34,8 @@ import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.giangnt.webapp.model.Link;
 
 /**
  * This class represents the basic "user" object in AppFuse that allows for
@@ -68,6 +71,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
 	private boolean accountLocked;
 	private boolean credentialsExpired;
 	private int freeLink;
+	private Set<Link> links = new HashSet<Link>();
 
 	/**
 	 * Default constructor - creates a new instance with no values set.
@@ -169,7 +173,15 @@ public class User extends BaseObject implements Serializable, UserDetails {
 	public Set<Role> getRoles() {
 		return roles;
 	}
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+	public Set<Link> getLink() {
+		return links;
+	}
 
+	public void setLink(Set<Link> links) {
+		this.links = links;
+	}
 	/**
 	 * Convert user roles to LabelValue objects for convenience.
 	 * 

@@ -13,6 +13,15 @@
 <div class="span3">
     <h2><fmt:message key="getter.heading"/></h2>
     <p><fmt:message key="getter.message"/></p>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!-- Footer -->
+	<ins class="adsbygoogle"
+	     style="display:inline-block;width:336px;height:280px"
+	     data-ad-client="ca-pub-5775470735879068"
+	     data-ad-slot="8779007036"></ins>
+	<script>
+	(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
 </div>
 
 <div class="span7">
@@ -46,9 +55,9 @@
 			<input type="button" class="btn btn-primary" name="action"
 				id="submit" onclick="bCancel=false; getLink()"
 				value="<fmt:message key="button.getLink"/>" /> 
-			<input type="button" class="btn btn-primary" name="action"
+			<%-- <input type="button" class="btn btn-primary" name="action"
 				id="submit" onclick="bCancel=false; getLink1()"
-				value="<fmt:message key="button.getLink"/>" /> 	
+				value="<fmt:message key="button.getLink"/>" /> 	 --%>
 			<input type="submit"
 				class="btn btn-primary" name="cancel" id="cancel"
 				onclick="bCancel=true" value="<fmt:message key="button.cancel"/>" />
@@ -62,13 +71,14 @@
 	   response.setDateHeader ("Expires", 0); //prevents caching at the proxy server 
 	   response.setDateHeader("Expires", 0);
 	%>
-	<video id="example_video_1" class="video-js vjs-default-skin"
+	
+<!-- 	<video id="example_video_1" class="video-js vjs-default-skin"
 	  controls preload="auto" width="640" height="264"
 	  poster="http://video-js.zencoder.com/oceans-clip.png"
 	  data-setup='{"example_option":true}'>
 	 <source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4' />
 	 <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
-	</video>
+	</video> -->
 <!-- 	<form action="https://www.baokim.vn/payment/product/version11" method="get" accept-charset="UTF-8">
 <input type="hidden" name="business" value="giangnt60014@gmail.com">
 <input type="hidden" name="product_name" value="VIP 1 tháng">

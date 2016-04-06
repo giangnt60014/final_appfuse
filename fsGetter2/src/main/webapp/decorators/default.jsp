@@ -38,6 +38,19 @@
                         <fmt:message key="webapp.name"/> in English</a>
                     </div>
                 </c:if>
+                <span class="right">
+                	<!-- hitwebcounter Code START -->
+					<a href="http://www.hitwebcounter.com" target="_blank">
+					<img src="http://hitwebcounter.com/counter/counter.php?page=6358802&style=0038&nbdigits=5&type=ip&initCount=0" title="Hit Web Stats" Alt="Hit Web Stats"   border="0" >
+					</a> <br/>
+					    <!-- hitwebcounter.com --><a href="http://www.hitwebcounter.com" title="Fast Counters" 
+					    target="_blank" style="font-family: sans-serif, Arial, Helvetica; 
+					    font-size: 9px; color: #9F9F97; text-decoration: none ;"><strong>Fast Counters</strong>
+					    </a> 
+		            <c:if test="${pageContext.request.remoteUser != null}">
+		            | <fmt:message key="user.status"/> ${pageContext.request.remoteUser}
+		            </c:if>
+		        </span>
             </div>
         </div>
     </div>
@@ -58,14 +71,30 @@
     </div>
 
     <div id="footer">
-        <span class="left"><fmt:message key="webapp.version"/>
-            <c:if test="${pageContext.request.remoteUser != null}">
-            | <fmt:message key="user.status"/> ${pageContext.request.remoteUser}
-            </c:if>
+        <span class="left">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+			<!-- Footer -->
+			<ins class="adsbygoogle"
+			     style="display:inline-block;width:336px;height:280px"
+			     data-ad-client="ca-pub-5775470735879068"
+			     data-ad-slot="8779007036"></ins>
+			<script>
+			(adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
         </span>
         <span class="right">
-            &copy; <fmt:message key="copyright.year"/> <a href="<fmt:message key="company.url"/>"><fmt:message key="company.name"/></a>
+            &copy; <fmt:message key="copyright.year"/> <a href="<fmt:message key="company.url"/>"><fmt:message key="webapp.version"/></a>
         </span>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+			<!-- Footer -->
+			<ins class="adsbygoogle"
+			     style="display:inline-block;width:336px;height:280px"
+			     data-ad-client="ca-pub-5775470735879068"
+			     data-ad-slot="8779007036"></ins>
+			<script>
+			(adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
+        
     </div>
 <%= (request.getAttribute("scripts") != null) ?  request.getAttribute("scripts") : "" %>
 </body>

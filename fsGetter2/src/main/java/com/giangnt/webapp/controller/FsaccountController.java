@@ -45,7 +45,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.giangnt.webapp.model.Fsaccount;
+import com.giangnt.webapp.model.Link;
 import com.giangnt.webapp.service.FsaccountManager;
+import com.giangnt.webapp.service.LinkManager;
 import com.giangnt.webapp.util.NumberUtil;
 import com.giangnt.webapp.util.RequestUtil;
 
@@ -60,6 +62,7 @@ public class FsaccountController extends BaseFormController implements Serializa
 	private CloseableHttpClient client = HttpClientBuilder.create().disableRedirectHandling().build();
 	private FsaccountManager fsaccountManager = null;
 	private UserManager userManager;
+	private LinkManager linkManager;
 	private String ipAddress;
 	CookieStore cookieStore = new BasicCookieStore();
 	HttpContext httpContext = new BasicHttpContext();
@@ -81,6 +84,11 @@ public class FsaccountController extends BaseFormController implements Serializa
 	@Autowired
 	public void setFsaccountManager(FsaccountManager fsaccountManager) {
 		this.fsaccountManager = fsaccountManager;
+	}
+	
+	@Autowired
+	public void setLinkManager(LinkManager linkManager) {
+		this.linkManager = linkManager;
 	}
 
 	public FsaccountController() {
@@ -124,11 +132,6 @@ public class FsaccountController extends BaseFormController implements Serializa
 
 		User user = (User) SecurityContextHolder.getContext()
 				.getAuthentication().getPrincipal();
-//		if (link.contains("folder")) {
-//
-//		} else {
-//
-//		}
 		System.out.println("Client Ip: " + ipAddress);
 		
 		String directLink = downloadFile(request, Integer.parseInt(accountId),
@@ -140,6 +143,12 @@ public class FsaccountController extends BaseFormController implements Serializa
 			Fsaccount accountChosen = fsaccountManager.getById(Integer.parseInt(accountId));
 			accountChosen.setUsing(accountChosen.getUsing() + 1);
 			fsaccountManager.updateFsAccount(accountChosen);
+			
+			Link linkObj = new Link();
+			linkObj.setLink(link);
+			linkObj.setDirectLink(directLink);
+			linkObj.setUser(user);
+			linkManager.saveLink(linkObj);
 		}
 		System.out.println(user.getUsername() + " is logged in get " + directLink);
 		return directLink;

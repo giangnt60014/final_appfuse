@@ -12,6 +12,7 @@
     <prerequisites>
         <maven>3.1.1</maven>
     </prerequisites>
+
     <!--<licenses>
         <license>
             <name></name>
@@ -42,27 +43,6 @@
     <build>
         <defaultGoal>install</defaultGoal>
         <plugins>
-        	<plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-dependency-plugin</artifactId>
-	            <version>2.3</version>
-	            <executions>
-	                <execution>
-	                    <phase>package</phase>
-	                    <goals><goal>copy</goal></goals>
-	                    <configuration>
-	                        <artifactItems>
-	                            <artifactItem>
-	                                <groupId>com.github.jsimone</groupId>
-	                                <artifactId>webapp-runner</artifactId>
-	                                <version>8.0.30.2</version>
-	                                <destFileName>webapp-runner.jar</destFileName>
-	                            </artifactItem>
-	                        </artifactItems>
-	                    </configuration>
-	                </execution>
-	            </executions>
-	        </plugin>
             <plugin>
                 <groupId>org.appfuse.plugins</groupId>
                 <artifactId>appfuse-maven-plugin</artifactId>
@@ -667,9 +647,9 @@
                 <jdbc.artifactId>postgresql</jdbc.artifactId>
                 <jdbc.version>8.1-407.jdbc3</jdbc.version>
                 <jdbc.driverClassName>org.postgresql.Driver</jdbc.driverClassName>
-                <jdbc.url>postgres://mhgqlkxxvboaek:IHTpWHcfXmt8rfapreIz2TP_c0@ec2-54-225-112-119.compute-1.amazonaws.com:5432/d950bl1j0iag1a</jdbc.url>
-                <jdbc.username>mhgqlkxxvboaek</jdbc.username>
-                <jdbc.password>IHTpWHcfXmt8rfapreIz2TP_c0</jdbc.password>
+                <jdbc.url>jdbc:postgresql://localhost/${db.name}</jdbc.url>
+                <jdbc.username>postgres</jdbc.username>
+                <jdbc.password>postgres</jdbc.password>
             </properties>
         </profile>
         <profile>
@@ -743,8 +723,7 @@
         -->
 
         <!-- Database settings -->
-        
-        <!-- <dbunit.dataTypeFactoryName>org.dbunit.ext.mysql.MySqlDataTypeFactory</dbunit.dataTypeFactoryName>
+        <dbunit.dataTypeFactoryName>org.dbunit.ext.mysql.MySqlDataTypeFactory</dbunit.dataTypeFactoryName>
         <dbunit.operation.type>CLEAN_INSERT</dbunit.operation.type>
         <hibernate.dialect>org.hibernate.dialect.MySQL5InnoDBDialect</hibernate.dialect>
         <jdbc.groupId>mysql</jdbc.groupId>
@@ -753,15 +732,28 @@
         <jdbc.driverClassName>com.mysql.jdbc.Driver</jdbc.driverClassName>
         <jdbc.url>jdbc:mysql://localhost/${db.name}?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8&amp;amp;autoReconnect=true</jdbc.url>
         <jdbc.username>root</jdbc.username>
-        <jdbc.password>root</jdbc.password> -->
+        <jdbc.password>root</jdbc.password>
         
-        <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
-        <jdbc.groupId>postgresql</jdbc.groupId>
-        <jdbc.artifactId>postgresql</jdbc.artifactId>
-        <jdbc.version>8.1-407.jdbc3</jdbc.version>
-        <jdbc.driverClassName>org.postgresql.Driver</jdbc.driverClassName>
-        <jdbc.url>postgres://xjmkvzzfvnrmup:894rvefg5FzGEOOFrO7V8tb4i-@ec2-54-225-112-119.compute-1.amazonaws.com:5432/d3kjr9mmaaj979</jdbc.url>
-        <jdbc.username>xjmkvzzfvnrmup</jdbc.username>
-        <jdbc.password>894rvefg5FzGEOOFrO7V8tb4i-</jdbc.password>
+        <!-- <dbunit.dataTypeFactoryName>org.dbunit.ext.mysql.MySqlDataTypeFactory</dbunit.dataTypeFactoryName>
+        <dbunit.operation.type>CLEAN_INSERT</dbunit.operation.type>
+        <hibernate.dialect>org.hibernate.dialect.MySQL5InnoDBDialect</hibernate.dialect>
+        <jdbc.groupId>mysql</jdbc.groupId>
+        <jdbc.artifactId>mysql-connector-java</jdbc.artifactId>
+        <jdbc.version>5.1.22</jdbc.version>
+        <jdbc.driverClassName>com.mysql.jdbc.Driver</jdbc.driverClassName>
+        <jdbc.url>jdbc:mysql://127.12.82.130:3306/$fshare?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8&amp;amp;autoReconnect=true</jdbc.url>
+        <jdbc.username>adminYg7jUtg</jdbc.username>
+        <jdbc.password>UZ6K43cejVWE</jdbc.password>  -->
+        
+        <!-- <dbunit.dataTypeFactoryName>org.dbunit.ext.mysql.MySqlDataTypeFactory</dbunit.dataTypeFactoryName>
+        <dbunit.operation.type>CLEAN_INSERT</dbunit.operation.type>
+        <hibernate.dialect>org.hibernate.dialect.MySQL5InnoDBDialect</hibernate.dialect>
+        <jdbc.groupId>mysql</jdbc.groupId>
+        <jdbc.artifactId>mysql-connector-java</jdbc.artifactId>
+        <jdbc.version>5.1.22</jdbc.version>
+        <jdbc.driverClassName>com.mysql.jdbc.Driver</jdbc.driverClassName>
+        <jdbc.url>jdbc:mysql://localhost:3306/$ofsgett9_fsgetter?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8&amp;amp;autoReconnect=true</jdbc.url>
+        <jdbc.username>ofsgett9_admin</jdbc.username>
+        <jdbc.password>=ttyo5[OT5B$</jdbc.password> -->
     </properties>
 </project>

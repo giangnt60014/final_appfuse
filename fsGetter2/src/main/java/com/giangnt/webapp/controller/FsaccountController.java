@@ -59,7 +59,13 @@ public class FsaccountController extends BaseFormController implements Serializa
 	 * 
 	 */
 	private static final long serialVersionUID = 5256970539504686733L;
-	private CloseableHttpClient client = HttpClientBuilder.create().disableRedirectHandling().build();
+	private RequestConfig reqConfig = RequestConfig.copy(RequestConfig.DEFAULT)
+            .setConnectTimeout(30000)
+            .setSocketTimeout(30000)
+            .setConnectionRequestTimeout(60000)
+            .build();
+	private CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(reqConfig)
+			.disableRedirectHandling().build();
 	private FsaccountManager fsaccountManager = null;
 	private UserManager userManager;
 	private LinkManager linkManager;
@@ -231,7 +237,7 @@ public class FsaccountController extends BaseFormController implements Serializa
 		post.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate");
 		
 		post.setHeader("Cookie", "session_id="+ map.get("sessionid"));
-		RequestConfig config = RequestConfig.custom().setCircularRedirectsAllowed(true).build();
+		RequestConfig config = RequestConfig.copy(reqConfig).setCircularRedirectsAllowed(true).build();
 		post.setConfig(config);
 		CloseableHttpResponse response = client.execute(post);
 		post.abort();
@@ -261,6 +267,7 @@ public class FsaccountController extends BaseFormController implements Serializa
 		get.setHeader("Connection", "close");
 		get.setHeader("X-FORWARDED-FOR", ipAddress);
 		get.setHeader("Content-Type", "application/x-www-form-urlencoded");
+		get.setConfig(reqConfig);
 		try {
 
 			HttpResponse response = client.execute(get, httpContext);

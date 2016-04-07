@@ -71,29 +71,40 @@
     </div>
 
     <div id="footer">
-        <span class="left">
-            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-			<!-- Footer -->
+    	
+        <span class="left" id="rss">
+        <%@ include file="/rss/rssVnExpress.jsp" %>
+            <!-- <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+			Footer
 			<ins class="adsbygoogle"
 			     style="display:inline-block;width:336px;height:280px"
 			     data-ad-client="ca-pub-5775470735879068"
 			     data-ad-slot="8779007036"></ins>
 			<script>
 			(adsbygoogle = window.adsbygoogle || []).push({});
-			</script>
+			</script> -->
+        </span>
+        <span style="float:left;margin:5px">
+        	<%@ include file="/rss/rssTinhte.jsp" %>
+        </span>
+        <span style="float:left;margin:5px">
+        	<%@ include file="/rss/rssTuoitre.jsp" %>
+        </span>
+        <span style="float:left;margin:5px">
+        	<%@ include file="/rss/rssVNN.jsp" %>
         </span>
         <span class="right">
             &copy; <fmt:message key="copyright.year"/> <a href="<fmt:message key="company.url"/>"><fmt:message key="webapp.version"/></a>
         </span>
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-			<!-- Footer -->
+        <!-- <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+			Footer
 			<ins class="adsbygoogle"
 			     style="display:inline-block;width:336px;height:280px"
 			     data-ad-client="ca-pub-5775470735879068"
 			     data-ad-slot="8779007036"></ins>
 			<script>
 			(adsbygoogle = window.adsbygoogle || []).push({});
-			</script>
+			</script> -->
         
     </div>
 <%= (request.getAttribute("scripts") != null) ?  request.getAttribute("scripts") : "" %>

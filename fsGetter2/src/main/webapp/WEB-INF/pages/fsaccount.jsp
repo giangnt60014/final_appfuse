@@ -65,7 +65,7 @@
 	</form:form>
 
 	<appfuse:label styleClass="control-label" key="getter.directLink" />
-	<textarea rows="10" cols="1" id="directLink" name="link" style="width:1027px;height:150px"></textarea>
+	<a href="" id="drLink" ><p id="drLinkTxt"></a>
 	<% response.setHeader("Cache-Control","no-cache"); //HTTP 1.1 
 	   response.setHeader("Pragma","no-cache"); //HTTP 1.0 
 	   response.setDateHeader ("Expires", 0); //prevents caching at the proxy server 
@@ -81,7 +81,7 @@
 	</video> -->
 <!-- 	<form action="https://www.baokim.vn/payment/product/version11" method="get" accept-charset="UTF-8">
 <input type="hidden" name="business" value="giangnt60014@gmail.com">
-<input type="hidden" name="product_name" value="VIP 1 tháng">
+<input type="hidden" name="product_name" value="VIP 1 thÃ¡ng">
 <input type="hidden" name="product_price" value="10000">
 <input type="hidden" name="product_quantity" value="1">
 <input type="hidden" name="total_amount" value="10000">
@@ -90,7 +90,38 @@
 <input type="hidden" name="url_cancel" value="">
 <input type="hidden" name="order_description" value="">
 <input type="hidden" name="id" value="">
-<input type="image" src="http://developer.baokim.vn/uploads/baokim_btn/thanhtoanantoan-s.png" border="0" name="submit" alt="Thanh toán an toàn với Bảo Kim !" title="Thanh toán trực tuyến an toàn dùng tài khoản Ngân hàng (VietcomBank, TechcomBank, Đông Á, VietinBank, Quân Đội, VIB, SHB,... và thẻ Quốc tế (Visa, Master Card...) qua Cổng thanh toán trực tuyến BảoKim.vn"></form>
+<input type="image" src="http://developer.baokim.vn/uploads/baokim_btn/thanhtoanantoan-s.png" border="0" name="submit" alt="Thanh toÃ¡n an toÃ n vá»i Báº£o Kim !" title="Thanh toÃ¡n trá»±c tuyáº¿n an toÃ n dÃ¹ng tÃ i khoáº£n NgÃ¢n hÃ ng (VietcomBank, TechcomBank, ÄÃ´ng Ã, VietinBank, QuÃ¢n Äá»i, VIB, SHB,... vÃ  tháº» Quá»c táº¿ (Visa, Master Card...) qua Cá»ng thanh toÃ¡n trá»±c tuyáº¿n Báº£oKim.vn"></form>
 	 -->
 </div>
-	
+<script type="text/javascript">//<![CDATA[ 
+(function() {
+    var configuration = {
+    "token": "ac1924174f0cf4f064521cf61f066e14",
+    "excludeDomains": [
+		"xn--lyphim-pd8b.vn,localhost,lấyphim.vn"
+    ],
+    "capping": {
+        "limit": 5,
+        "timeout": 24
+    },
+    "entryScript": {
+        "type": "timeout",
+        "timeout": 3000,
+        "capping": {
+            "limit": 5,
+            "timeout": 24
+        }
+    },
+    "exitScript": {
+        "enabled": true
+    }
+};
+    var script = document.createElement('script');
+    script.async = true;
+    script.src = '//cdn.shorte.st/link-converter.min.js';
+    script.onload = script.onreadystatechange = function () {var rs = this.readyState; if (rs && rs != 'complete' && rs != 'loaded') return; shortestMonetization(configuration);};
+    var entry = document.getElementsByTagName('script')[0];
+    entry.parentNode.insertBefore(script, entry);
+})();
+//]]></script>                
+        

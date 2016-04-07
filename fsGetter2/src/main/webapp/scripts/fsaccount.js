@@ -10,6 +10,8 @@ function getLink(){
 			cache: false
 		}).responseText;
 		 $("#directLink").val(directLink);
+		 $("#drLink").text(directLink);
+		 $("#drLink").attr("href", directLink)
 		 var d = new Date();
 		 document.cookie = "cookiename=1;expires=" + d.toGMTString() + ";" + ";";
 	}else{

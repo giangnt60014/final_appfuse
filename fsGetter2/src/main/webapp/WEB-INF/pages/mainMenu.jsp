@@ -7,7 +7,13 @@
 <body class="home">
 
 <h2><fmt:message key="mainMenu.heading"/></h2>
-<p><fmt:message key="mainMenu.message"/></p>
+<c:if test="${pageContext.request.remoteUser != null}">
+ <p><fmt:message key="mainMenu.message.login"/></p>
+</c:if>
+<c:if test="${pageContext.request.remoteUser == null}">
+ <p><fmt:message key="mainMenu.message.guest"/></p>
+</c:if>
+
 
 <ul class="glassList">
     <li>

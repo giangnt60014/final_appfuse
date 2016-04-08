@@ -14,7 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.Header;
+import org.apache.http.HeaderElement;
+import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -23,14 +26,18 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.appfuse.Constants;
 import org.appfuse.model.User;
@@ -59,13 +66,31 @@ public class FsaccountController extends BaseFormController implements Serializa
 	 * 
 	 */
 	private static final long serialVersionUID = 5256970539504686733L;
+	private PoolingHttpClientConnectionManager poolingConnManager = new PoolingHttpClientConnectionManager();
 	private RequestConfig reqConfig = RequestConfig.copy(RequestConfig.DEFAULT)
             .setConnectTimeout(30000)
             .setSocketTimeout(30000)
             .setConnectionRequestTimeout(60000)
             .build();
-	private CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(reqConfig)
-			.disableRedirectHandling().build();
+	ConnectionKeepAliveStrategy myStrategy = new ConnectionKeepAliveStrategy() {
+	    @Override
+	    public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+	        HeaderElementIterator it = new BasicHeaderElementIterator
+	            (response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+	        while (it.hasNext()) {
+	            HeaderElement he = it.nextElement();
+	            String param = he.getName();
+	            String value = he.getValue();
+	            if (value != null && param.equalsIgnoreCase
+	               ("timeout")) {
+	                return Long.parseLong(value) * 1000;
+	            }
+	        }
+	        return 5 * 1000;
+	    }
+	};
+	private CloseableHttpClient client = HttpClientBuilder.create().setKeepAliveStrategy(myStrategy).setDefaultRequestConfig(reqConfig)
+			.disableRedirectHandling().setConnectionManager(poolingConnManager).build();
 	private FsaccountManager fsaccountManager = null;
 	private UserManager userManager;
 	private LinkManager linkManager;
@@ -98,6 +123,10 @@ public class FsaccountController extends BaseFormController implements Serializa
 	}
 
 	public FsaccountController() {
+		poolingConnManager.setMaxTotal(5);
+		poolingConnManager.setDefaultMaxPerRoute(4);
+		HttpHost host = new HttpHost("www.fshare.vn", 80);
+		poolingConnManager.setMaxPerRoute(new HttpRoute(host), 5);
 		setCancelView("redirect:/mainMenu");
 		setSuccessView("redirect:/fsaccount");
 	}
@@ -138,7 +167,6 @@ public class FsaccountController extends BaseFormController implements Serializa
 
 		User user = (User) SecurityContextHolder.getContext()
 				.getAuthentication().getPrincipal();
-		System.out.println("Client Ip: " + ipAddress);
 		
 		String directLink = downloadFile(request, Integer.parseInt(accountId),
 				link.trim());
@@ -175,19 +203,11 @@ public class FsaccountController extends BaseFormController implements Serializa
 		try {
 			List<NameValuePair> postParams = getFormParams(url, username,
 					security);
-//			CookieStore cookieStore = (CookieStore) httpContext.getAttribute(ClientContext.COOKIE_STORE);
-//			for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
-//				if(cookie.getName().equals("")){
-//					String directLink = sendGet(request, link);
-//					return directLink;
-//				}
-//			}
 			sendPost(url, postParams, link);
 			String directLink = sendGet(request, link);
 			return directLink;
 		} catch (Exception e) {
 			logout();
-			client.getConnectionManager().shutdown();
 			e.printStackTrace();
 			return "Trùng phiên đăng nhập, vui lòng thử lại sau...";
 		}
@@ -227,11 +247,8 @@ public class FsaccountController extends BaseFormController implements Serializa
 		post.setEntity(entity);
 		// add header
 		post.setHeader(HttpHeaders.HOST, "www.fshare.vn");
-//		post.setHeader("User-Agent", "Mozilla/5.0");
 		post.setHeader(HttpHeaders.ACCEPT,
 				"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-//		post.setHeader("Accept-Language", "en-US,en;q=0.5");
-//		post.setHeader("Connection", "keep-alive");
 		post.setHeader(HttpHeaders.REFERER, "https://www.fshare.vn/");
 		post.setHeader(HttpHeaders.CONTENT_TYPE, URLEncodedUtils.CONTENT_TYPE);
 		post.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate");
@@ -245,6 +262,7 @@ public class FsaccountController extends BaseFormController implements Serializa
 		for (int i = 0; i < headers.length; i++) {
 			System.out.println(headers[i].getValue().toString());
 		}
+		post.releaseConnection();
 		return headers;
 		
 	}
@@ -279,6 +297,8 @@ public class FsaccountController extends BaseFormController implements Serializa
 				direcLk = response.getHeaders("Location")[0].getValue()
 						.toString();
 			}
+			get.releaseConnection();
+			logout();
 			return direcLk;
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
@@ -287,7 +307,7 @@ public class FsaccountController extends BaseFormController implements Serializa
 			e.printStackTrace();
 			logout();
 		}
-		logout();
+		
 		return null;
 	}
 

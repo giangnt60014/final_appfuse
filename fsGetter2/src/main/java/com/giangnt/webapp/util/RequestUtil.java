@@ -14,12 +14,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -31,7 +35,16 @@ import org.jsoup.select.Elements;
  */
 public final class RequestUtil {
 	private static final Log log = LogFactory.getLog(RequestUtil.class);
-
+	static PoolingHttpClientConnectionManager poolingConnManager = new PoolingHttpClientConnectionManager();
+	static RequestConfig reqConfig = RequestConfig.copy(RequestConfig.DEFAULT)
+            .setConnectTimeout(30000)
+            .setSocketTimeout(30000)
+            .setConnectionRequestTimeout(60000)
+            .build();
+	static HttpClient client = HttpClientBuilder.create().setConnectionManager(poolingConnManager).build();
+	static String sessionid = "";
+	static String setCookie = "";
+	
 	/**
 	 * Checkstyle rule: utility classes should not have public constructor
 	 * 
@@ -140,18 +153,18 @@ public final class RequestUtil {
 
 	public static Map<String, String> getCRSF(String url) throws IOException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
-		RequestConfig reqConfig = RequestConfig.copy(RequestConfig.DEFAULT)
-	            .setConnectTimeout(30000)
-	            .setSocketTimeout(30000)
-	            .setConnectionRequestTimeout(60000)
-	            .build();
-		HttpClient client = HttpClientBuilder.create().build();
+		poolingConnManager.setMaxTotal(5);
+		poolingConnManager.setDefaultMaxPerRoute(4);
+		HttpHost host = new HttpHost("www.fshare.vn", 80);
+		poolingConnManager.setMaxPerRoute(new HttpRoute(host), 5);
 		HttpGet request = new HttpGet("https://www.fshare.vn");
 		request.setConfig(reqConfig);
 		HttpResponse response = client.execute(request);
 		int responseCode = response.getStatusLine().getStatusCode();
-		String setCookie = response.getHeaders("Set-Cookie")[0].getValue();
-		String sessionid = setCookie.substring(setCookie.indexOf("=") + 1, setCookie.indexOf(";"));
+		if (response.getHeaders("Set-Cookie").length > 0){
+			setCookie =	response.getHeaders("Set-Cookie")[0].getValue();
+			sessionid = setCookie.substring(setCookie.indexOf("=") + 1, setCookie.indexOf(";"));
+		}
 		map.put("sessionid", sessionid);
 		System.out.println("\nSending 'GET' request to URL : " + url);
 		System.out.println("Response Code : " + responseCode);
@@ -167,10 +180,12 @@ public final class RequestUtil {
 				Elements inputElements = doc.getElementsByTag("input");
 				for (Element inputElement : inputElements) {
 					String value = inputElement.attr("value");
+					System.out.println(value);
 					map.put("csrf", value);
 					try {
 						if (entity != null)
 							EntityUtils.consume(entity);
+						request.releaseConnection();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

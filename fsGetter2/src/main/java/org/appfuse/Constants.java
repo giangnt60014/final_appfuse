@@ -54,6 +54,11 @@ public final class Constants {
      * The request scope attribute that holds the user list
      */
     public static final String USER_LIST = "userList";
+    
+    /**
+     * The request scope attribute that holds the user list
+     */
+    public static final String FILM_LIST = "filmList";
 
     /**
      * The request scope attribute for indicating a newly-registered user

@@ -22,6 +22,9 @@
     <li>
         <a href="<c:url value='/fsaccount'/>"><fmt:message key="getter.title"/></a>
     </li>
+    <li>
+        <a href="<c:url value='/linkFilm'/>"><fmt:message key="filmList.title"/></a>
+    </li>
 </ul>
 
 </body>

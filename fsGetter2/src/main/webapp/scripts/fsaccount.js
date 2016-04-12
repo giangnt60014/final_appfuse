@@ -9,9 +9,18 @@ function getLink(){
 			async: false,
 			cache: false
 		}).responseText;
-		 $("#directLink").val(directLink);
-		 $("#drLink").text(directLink);
-		 $("#drLink").attr("href", directLink)
+		var json;
+		var shortLink = $.ajax({ url: 'https://api.shorte.st/v1/data/url', 
+						headers: {'public-api-token': 'ac1924174f0cf4f064521cf61f066e14'},
+						type: 'PUT',
+						data: 'urlToShorten='+directLink,
+						dataType: 'application/json',
+					    complete: function(data){
+					    	$("#directLink").val(JSON.parse(data.responseText).shortenedUrl);
+					    	$("#drLink").text(JSON.parse(data.responseText).shortenedUrl);
+							$("#drLink").attr("href", JSON.parse(data.responseText).shortenedUrl);
+					    }
+					});
 		 var d = new Date();
 		 document.cookie = "cookiename=1;expires=" + d.toGMTString() + ";" + ";";
 	}else{

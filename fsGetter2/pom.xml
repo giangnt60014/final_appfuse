@@ -214,6 +214,7 @@
                             <includes>
                                 <include>ApplicationResources_zh*.properties</include>
                                 <include>ApplicationResources_ko*.properties</include>
+                                <include>ApplicationResources_vi*.properties</include>
                                 <include>displaytag_zh*.properties</include>
                             </includes>
                         </configuration>
@@ -684,7 +685,7 @@
     <properties>
         <!-- Application settings -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <copyright.year>2014</copyright.year>
+        <copyright.year>2016</copyright.year>
         <dao.framework>hibernate</dao.framework>
         <web.framework>spring</web.framework>
         <amp.genericCore>true</amp.genericCore>

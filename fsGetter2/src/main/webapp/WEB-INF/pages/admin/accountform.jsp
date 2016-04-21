@@ -5,7 +5,7 @@
     <meta name="menu" content="AdminMenu"/>
 </head>
 
-<div class="span2">
+<div class="col-md-2">
     <h2><fmt:message key="accountProfile.heading"/></h2>
     <c:choose>
         <c:when test="${param.from == 'list'}">
@@ -16,7 +16,7 @@
         </c:otherwise>
     </c:choose>
 </div>
-<div class="span7">
+<div class="col-md-7">
 
 
     <form:form commandName="fsaccount" method="post" action="accountform" id="accountform" autocomplete="off"
@@ -43,11 +43,11 @@
             </div>
         </fieldset>
         <fieldset class="form-actions">
-            <button type="submit" class="btn btn-primary" name="save" onclick="bCancel=false">
+            <button type="submit" class="btn btn-default btn-primary" name="save" onclick="bCancel=false">
                 <i class="icon-ok icon-white"></i> <fmt:message key="button.save"/>
             </button>
 
-            <button type="submit" class="btn" name="cancel" onclick="bCancel=true">
+            <button type="submit" class="btn btn-default" name="cancel" onclick="bCancel=true">
                 <i class="icon-remove"></i> <fmt:message key="button.cancel"/>
             </button>
         </fieldset>

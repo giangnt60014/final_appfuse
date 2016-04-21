@@ -5,12 +5,12 @@
 <script type="text/javascript" src="<c:url value='/scripts/fsaccount.js'/>"></script>       
 </head>
 
-<div class="span3">
+<div class="col-md-3">
     <h2><fmt:message key="getter.heading"/></h2>
     <p><fmt:message key="getter.message"/></p>
 </div>
 
-<div class="span7">
+<div class="col-md-7">
 	<form:form commandName="fsaccount" method="post" action="fsaccountform"
 		id="fsaccountform" cssClass="well form-horizontal">
 		

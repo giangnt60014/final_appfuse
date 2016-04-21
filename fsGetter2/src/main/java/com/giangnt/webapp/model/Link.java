@@ -51,7 +51,7 @@ public class Link {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user", nullable = false)
+	@JoinColumn(name = "user", nullable = true)
 	public User getUser() {
 		return user;
 	}

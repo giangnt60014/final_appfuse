@@ -13,7 +13,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpHeaders;
@@ -150,13 +149,19 @@ public class FsaccountController extends BaseFormController implements Serializa
 
 	@ModelAttribute("user")
 	public User getCurrentUser() {
-		User user = (User) SecurityContextHolder.getContext()
+		Object principalStr = SecurityContextHolder.getContext()
 				.getAuthentication().getPrincipal();
-		if (user.getUsername() != null && !user.getUsername().isEmpty()) {
-			return user;
-		} else {
+		if(principalStr instanceof String){
 			return null;
+		}else{
+			User user = (User) principalStr;
+			if (user.getUsername() != null && !user.getUsername().isEmpty()) {
+				return user;
+			} else {
+				return null;
+			}
 		}
+		
 
 	}
 
@@ -165,26 +170,30 @@ public class FsaccountController extends BaseFormController implements Serializa
 	String getLink(@RequestParam(value = "link", required = false) String link,
 			@RequestParam(value = "account", required = false) String accountId, HttpServletRequest request) {
 
-		User user = (User) SecurityContextHolder.getContext()
-				.getAuthentication().getPrincipal();
-		
+		User user = this.getCurrentUser();
+		if(accountId==null || "undefined".equals(accountId)){
+			accountId = fsaccountManager.getAllAccount().get(0).getId().toString();
+		}
 		String directLink = downloadFile(request, Integer.parseInt(accountId),
 				link.trim());
 		if (directLink != null && !directLink.isEmpty()) {
-			user.setFreeLink(user.getFreeLink() - 1);
-			userManager.save(user);
-
+			Link linkObj = new Link();
+			if(user!=null){
+				user.setFreeLink(user.getFreeLink() - 1);
+				userManager.save(user);
+				linkObj.setUser(user);
+			}
 			Fsaccount accountChosen = fsaccountManager.getById(Integer.parseInt(accountId));
 			accountChosen.setUsing(accountChosen.getUsing() + 1);
 			fsaccountManager.updateFsAccount(accountChosen);
 			
-			Link linkObj = new Link();
+			
 			linkObj.setLink(link);
 			linkObj.setDirectLink(directLink);
-			linkObj.setUser(user);
+			linkObj.setUser(userManager.getUserByUsername("user1"));
 			linkManager.saveLink(linkObj);
 		}
-		System.out.println(user.getUsername() + " is logged in get " + directLink);
+		System.out.println((user!=null ? user.getUsername():"Anonymous") + " is logged in get " + directLink);
 		return directLink;
 	}
 
@@ -209,21 +218,14 @@ public class FsaccountController extends BaseFormController implements Serializa
 		} catch (Exception e) {
 			logout();
 			e.printStackTrace();
-			return "Trùng phiên đăng nhập, vui lòng thử lại sau...";
+			System.out.println(e);
+			return "Lỗi trong quá trình lấy link, vui lòng thử lại sau...";
 		}
 	}
 
 	private List<NameValuePair> getFormParams(String url, String username,
 			String password) throws IOException {
 		List<NameValuePair> paramList = new ArrayList<NameValuePair>();
-//		Map<String, String> map = RequestUtil.getCRSF(url);
-//		BasicClientCookie cookie = new BasicClientCookie("JSESSIONID", map.get("sessionid"));
-//		cookieStore.addCookie(cookie);
-//		cookie.setDomain("");
-//		cookie.setPath("");
-//		cookieStore.addCookie(cookie);
-//		httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-//		paramList.add(new BasicNameValuePair("fs_csrf", map.get("csrf")));
 		paramList.add(new BasicNameValuePair("LoginForm[email]", username));
 		paramList.add(new BasicNameValuePair("LoginForm[password]", password));
 		paramList.add(new BasicNameValuePair("LoginForm[checkloginpopup]", "0"));
@@ -236,8 +238,10 @@ public class FsaccountController extends BaseFormController implements Serializa
 	/**
 	 *  Login to Fshare to get cookie header
 	 */
-	private Header[] sendPost(String url, List<NameValuePair> postParams,
+	private void sendPost(String url, List<NameValuePair> postParams,
 			String link) throws Exception {
+		System.out.println((getCurrentUser()!=null ? getCurrentUser().getUsername():"Anonymous") + " is trying to login...");
+		
 		Map<String, String> map = RequestUtil.getCRSF(url);
 		postParams.add(new BasicNameValuePair("fs_csrf", map.get("csrf")));
 		
@@ -256,24 +260,17 @@ public class FsaccountController extends BaseFormController implements Serializa
 		post.setHeader("Cookie", "session_id="+ map.get("sessionid"));
 		RequestConfig config = RequestConfig.copy(reqConfig).setCircularRedirectsAllowed(true).build();
 		post.setConfig(config);
-		CloseableHttpResponse response = client.execute(post);
+		client.execute(post);
 		post.abort();
-		Header[] headers = response.getHeaders("Set-Cookie");
-		for (int i = 0; i < headers.length; i++) {
-			System.out.println(headers[i].getValue().toString());
-		}
 		post.releaseConnection();
-		return headers;
+		System.out.println((getCurrentUser()!=null ? getCurrentUser().getUsername():"Anonymous") + " is logged in!");
 		
 	}
 
-	private String sendGet(HttpServletRequest request, String link){//, Header[] headers) {
-
-		User user = (User) SecurityContextHolder.getContext()
-				.getAuthentication().getPrincipal();
+	private String sendGet(HttpServletRequest request, String link){
 
 		String direcLk = "Trùng phiên đăng nhập, vui lòng thử lại sau...";
-		System.out.println(user.getUsername() + " is getting link: " + link);
+		System.out.println((getCurrentUser()!=null ? getCurrentUser().getUsername():"Anonymous") + " is getting link: " + link);
 		HttpGet get = new HttpGet(link);
 		get.setHeader("Host", "www.fshare.vn");
 		get.setHeader(
@@ -287,24 +284,24 @@ public class FsaccountController extends BaseFormController implements Serializa
 		get.setHeader("Content-Type", "application/x-www-form-urlencoded");
 		get.setConfig(reqConfig);
 		try {
-
-			HttpResponse response = client.execute(get, httpContext);
-//			ClientConnectionManager clientConnectionManager = client
-//					.getConnectionManager();
-
-			if (response.getHeaders("Location") != null
-					&& response.getHeaders("Location").length > 0) {
-				direcLk = response.getHeaders("Location")[0].getValue()
-						.toString();
-			}
+			CloseableHttpResponse  response = client.execute(get, httpContext);
+			direcLk = response.getHeaders("Location")[0].getValue()
+					.toString();
 			get.releaseConnection();
 			logout();
+			response.close();
 			return direcLk;
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
+			System.out.println(e);
 			logout();
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.out.println(e);
+			logout();
+		}catch (Exception e){
+			e.printStackTrace();
+			System.out.println(e);
 			logout();
 		}
 		
@@ -312,8 +309,6 @@ public class FsaccountController extends BaseFormController implements Serializa
 	}
 
 	public String logout() {
-		User user = (User) SecurityContextHolder.getContext()
-				.getAuthentication().getPrincipal();
 
 		HttpGet get = new HttpGet("http://www.fshare.vn/logout");
 		get.setHeader("Host", "www.fshare.vn");
@@ -326,17 +321,19 @@ public class FsaccountController extends BaseFormController implements Serializa
 		get.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
 		try {
-			HttpResponse response = client.execute(get);
+			CloseableHttpResponse  response = client.execute(get);
 			response.setHeader("Cache-Control", "no-cache");
 			response.setHeader("Cache-Control", "no-store");
 			response.setHeader("Pragma", "no-cache");
-			System.out
-					.println(user.getUsername() + " is logged out of Fshare!");
+			System.out.println((getCurrentUser()!=null ? getCurrentUser().getUsername():"Anonymous") + " is logged out of Fshare!");
 			get.releaseConnection();
+			response.close();
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
+			System.out.println(e);
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.out.println(e);
 		}
 		return null;
 	}

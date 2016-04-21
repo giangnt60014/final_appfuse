@@ -4,6 +4,7 @@
 <script type="text/javascript">
   document.createElement('video');document.createElement('audio');document.createElement('track');
 </script>
+
 <head>
 <title><fmt:message key="getter.title" /></title>
 <meta name="menu" content="GetterMenu" charset="UTF-8"/>
@@ -13,26 +14,28 @@
 <div class="span3">
     <h2><fmt:message key="getter.heading"/></h2>
     <p><fmt:message key="getter.message"/></p>
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-	<!-- Footer -->
-	<ins class="adsbygoogle"
-	     style="display:inline-block;width:336px;height:280px"
-	     data-ad-client="ca-pub-5775470735879068"
-	     data-ad-slot="8779007036"></ins>
-	<script>
-	(adsbygoogle = window.adsbygoogle || []).push({});
-	</script>
+    <div>
+    	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+		<!-- fsGetter-LargeRec -->
+		<ins class="adsbygoogle"
+		     style="display:inline-block;width:336px;height:280px"
+		     data-ad-client="ca-pub-5775470735879068"
+		     data-ad-slot="9430835037"></ins>
+		<script>
+		(adsbygoogle = window.adsbygoogle || []).push({});
+		</script>
+	</div>
 </div>
 
-<div class="span7">
-	<form:form commandName="fsaccount" method="post" action="fsaccountform"
-		id="fsaccountform" cssClass="well form-horizontal">
+<div class="span6">
+	<form:form commandName="fsaccount" method="post" action="fsaccountform" data-toggle="validator"
+		id="fsaccountform" cssClass="well form-horizontal" cssStyle="margin-left:20px;">
 		
-		<fieldset class="control-group${(not empty status.errorMessage) ? ' error' : ''}">
-			
+		<fieldset class="control-group${(not empty status.errorMessage) ? ' error' : ''}" id="fieldSetErr">
 				<appfuse:label styleClass="control-label" key="getter.link" /> 
 			<div class="controls">
 				<input	type="text" name="link" id="link"/>
+				<div class="help-inline" id="errorMessage" style="display:none"><fmt:message key="getter.linkFormat"/></div>
 			</div>			
 		</fieldset>
 		<fieldset class="control-group${(not empty status.errorMessage) ? ' error' : ''}">
@@ -51,21 +54,26 @@
 			<label id="freeLink">${user.freeLink}</label>
 			</div>			
 		</fieldset>
+		<fieldset class="control-group${(not empty status.errorMessage) ? ' error' : ''}">
+			<appfuse:label styleClass="control-label" key="getter.directLink" />
+			<div class="controls">
+				<a href="" id="drLink" ><p id="drLinkTxt"></a>
+			</div>
+		</fieldset>
 		<fieldset class="form-actions">
-			<input type="button" class="btn btn-primary" name="action"
+		<c:if test="${empty pageContext.request.remoteUser}">
+		 <input type="button" class="btn btn-primary" name="action"
 				id="submit" onclick="bCancel=false; getLink()"
 				value="<fmt:message key="button.getLink"/>" /> 
-			<%-- <input type="button" class="btn btn-primary" name="action"
-				id="submit" onclick="bCancel=false; getLink1()"
-				value="<fmt:message key="button.getLink"/>" /> 	 --%>
-			<input type="submit"
-				class="btn btn-primary" name="cancel" id="cancel"
-				onclick="bCancel=true" value="<fmt:message key="button.cancel"/>" />
+		</c:if>
+		<c:if test="${pageContext.request.remoteUser != null}">
+ 			<input type="button" class="btn btn-primary" name="action"
+				id="submit" onclick="bCancel=false; getLinkReg()"
+				value="<fmt:message key="button.getLink"/>" /> 
+		</c:if>
 		</fieldset>
 	</form:form>
 
-	<appfuse:label styleClass="control-label" key="getter.directLink" />
-	<a href="" id="drLink" ><p id="drLinkTxt"></a>
 	<% response.setHeader("Cache-Control","no-cache"); //HTTP 1.1 
 	   response.setHeader("Pragma","no-cache"); //HTTP 1.0 
 	   response.setDateHeader ("Expires", 0); //prevents caching at the proxy server 
@@ -93,12 +101,23 @@
 <input type="image" src="http://developer.baokim.vn/uploads/baokim_btn/thanhtoanantoan-s.png" border="0" name="submit" alt="Thanh toÃ¡n an toÃ n vá»i Báº£o Kim !" title="Thanh toÃ¡n trá»±c tuyáº¿n an toÃ n dÃ¹ng tÃ i khoáº£n NgÃ¢n hÃ ng (VietcomBank, TechcomBank, ÄÃ´ng Ã, VietinBank, QuÃ¢n Äá»i, VIB, SHB,... vÃ  tháº» Quá»c táº¿ (Visa, Master Card...) qua Cá»ng thanh toÃ¡n trá»±c tuyáº¿n Báº£oKim.vn"></form>
 	 -->
 </div>
+<div class="span3" style="width:20%">
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!-- 120x240 -->
+	<ins class="adsbygoogle"
+	     style="display:inline-block;width:120px;height:240px"
+	     data-ad-client="ca-pub-5775470735879068"
+	     data-ad-slot="8944653830"></ins>
+	<script>
+	(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+</div>
 <script type="text/javascript">//<![CDATA[ 
 (function() {
     var configuration = {
     "token": "ac1924174f0cf4f064521cf61f066e14",
     "excludeDomains": [
-		"xn--lyphim-pd8b.vn,localhost,lấyphim.vn"
+		"xn--lyphim-pd8b.vn,localhost:8080,lấyphim.vn,layphim.com"
     ],
     "capping": {
         "limit": 5,
@@ -123,5 +142,6 @@
     var entry = document.getElementsByTagName('script')[0];
     entry.parentNode.insertBefore(script, entry);
 })();
-//]]></script>                
+//]]>
+</script>                
         

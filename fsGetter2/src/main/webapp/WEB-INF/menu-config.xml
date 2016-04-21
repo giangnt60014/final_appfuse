@@ -7,7 +7,7 @@
         <Menu name="MainMenu" title="mainMenu.title" page="/mainMenu" roles="ROLE_ADMIN,ROLE_USER"/>
         <Menu name="FilmMenu" title="filmList.title" page="/linkFilm"/>
         <Menu name="UserMenu" title="menu.user" description="User Menu" page="/userform" roles="ROLE_ADMIN,ROLE_USER"/>
-        <Menu name="GetterMenu" title="menu.getter" description="Getter Menu" page="/fsaccount" roles="ROLE_ADMIN,ROLE_USER,ROLE_ANONYMOUS"/>
+        <Menu name="GetterMenu" title="menu.getter" description="Getter Menu" page="/fsaccount"/>
         <Menu name="AdminMenu" title="menu.admin" description="Admin Menu" roles="ROLE_ADMIN" page="/admin/users">
             <Item name="ViewUsers" title="menu.admin.users" page="/admin/users"/>
             <Item name="ActiveUsers" title="mainMenu.activeUsers" page="/admin/activeUsers"/>
@@ -15,6 +15,7 @@
             <Item name="FileUpload" title="menu.selectFile" page="/fileupload"/>
             <Item name="New Account" title="menu.admin.newAccount" page="/admin/accountform"/>
         </Menu>
+        <Menu name="About" title="about.title" page="/about"/>
         <Menu name="Logout" title="user.logout" page="/logout" roles="ROLE_ADMIN,ROLE_USER"/>
     </Menus>
 </MenuConfig>

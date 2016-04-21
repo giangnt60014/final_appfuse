@@ -5,11 +5,11 @@
     <meta name="menu" content="AdminMenu"/>
 </head>
 
-<div class="span3">
+<div class="col-md-3">
     <h2><fmt:message key="upload.heading"/></h2>
     <p><fmt:message key="upload.message"/></p>
 </div>
-<div class="span7">
+<div class="col-md-7">
     <spring:bind path="fileUpload.*">
         <c:if test="${not empty status.errorMessages}">
         <div class="alert alert-error fade in">

@@ -37,6 +37,7 @@
     <!-- Convenient way to map URLs to JSPs w/o having a Controller -->
     <mvc:view-controller path="/admin/activeUsers" view-name="admin/activeUsers"/>
     <mvc:view-controller path="/mainMenu" view-name="mainMenu"/>
+    <mvc:view-controller path="/about" view-name="about"/>
 
     <!-- View Resolver for JSPs -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -44,6 +45,7 @@
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/pages/"/>
         <property name="suffix" value=".jsp"/>
+        <property name="contentType"><value>text/html;charset=UTF-8</value></property>
     </bean>
 	
     <!-- Add additional controller beans here -->

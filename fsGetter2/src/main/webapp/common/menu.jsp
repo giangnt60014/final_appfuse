@@ -13,6 +13,7 @@
     <menu:displayMenu name="UserMenu"/>
     <menu:displayMenu name="GetterMenu"/>
     <menu:displayMenu name="AdminMenu"/>
+    <menu:displayMenu name="About"/>
     <menu:displayMenu name="Logout"/>
 </ul>
 </div>

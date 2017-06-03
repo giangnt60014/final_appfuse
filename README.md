@@ -1,0 +1,1 @@
+FSGetter is a project to create a place for Vietnamese who does not have enough money to buy VIP package of Fshare.vn to take the direct link from this service, this feature is only used by VIP users.
